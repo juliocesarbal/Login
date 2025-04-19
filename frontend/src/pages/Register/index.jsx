@@ -72,7 +72,6 @@ const Register = () => {
 
   const sendData = async () => {
     try {
-      console.log(objData)
       const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -90,7 +89,7 @@ const Register = () => {
         throw new Error("Error al enviar los datos");
       } else {
         const data = await response.json();
-        console.log("Post successful", data);
+        console.log("Post successful");
         navigate("/");
       }
 

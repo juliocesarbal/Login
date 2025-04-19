@@ -17,9 +17,15 @@ const validationRegister = [
         .isLength({ min: 6 }).withMessage("Password: mínimo 6 caracteres")
         .bail()
         .matches(/^(?=.*[A-Z]).*$/).withMessage("Password: Debe tener al menos una mayúscula"),
+        body("ci")
+        .notEmpty().withMessage("CI requerido")
+        .bail()
+        .isNumeric().withMessage("CI debe contener solo números"),
 
-    body("id_sucursal").notEmpty().withMessage("La sucursal es requerida")
-
+    body("telefono")
+        .notEmpty().withMessage("Número requerido")
+        .bail()
+        .isNumeric().withMessage("Número debe contener solo números")
 ];
 
 export default validationRegister;

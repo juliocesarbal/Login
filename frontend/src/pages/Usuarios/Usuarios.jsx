@@ -27,6 +27,7 @@ const Usuarios = () => {
             <tr>
               <th>Nombre</th>
               <th>CI</th>
+              <th>Sexo</th>
               <th>Correo</th>
               <th>Teléfono</th>
               <th>Sucursal</th>
@@ -39,6 +40,7 @@ const Usuarios = () => {
               <tr key={usuario.id}>
                 <td>{usuario.nombre}</td>
                 <td>{usuario.ci}</td>
+                <td>{usuario.sexo}</td>
                 <td>{usuario.correo}</td>
                 <td>{usuario.telefono}</td>
                 <td>{usuario.sucursal}</td>

@@ -78,7 +78,7 @@ const Login =() =>{
           }
       
           const data = await response.json();
-          console.log("Login successful", data);
+          console.log("Login successful");
           sessionStorage.setItem("authToken", data.token);
           navigate("/home");
       
