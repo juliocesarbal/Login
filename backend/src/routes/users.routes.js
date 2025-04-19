@@ -8,7 +8,7 @@ router.get('/users/:id',getUser);
 
 router.post('/users',validationRegister,createUser);
 
-router.delete('/users/:id',deleteUser);
+router.delete('/users/ci/:ci',deleteUser);
 
 router.put('/users/:id',updateUser);
 

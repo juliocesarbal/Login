@@ -164,14 +164,26 @@ export const createUser = async (req, res) => {
   };
 
 
-export const deleteUser = async(req,res)=>{
-    const {id} =req.params;
-    const {rowCount} = await pool.query('DELETE FROM usuario WHERE ID = $1 RETURNING *',[id]);
-    if(rowCount ===0){
-        return res.status(404).json({message:"user not found"});
+  export const deleteUser = async (req, res) => {
+    const { ci } = req.params;
+  
+    try {
+      const { rowCount } = await pool.query(
+        'DELETE FROM usuario WHERE ci = $1 RETURNING *',
+        [ci]
+      );
+  
+      if (rowCount === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado con ese CI" });
+      }
+  
+      return res.status(204).send(); // Eliminado con éxito, sin contenido
+    } catch (error) {
+      console.error("Error al eliminar usuario por CI:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
     }
-    return res.sendStatus(204);
-};
+  };
+  
 
 
 export const updateUser = async(req,res)=>{

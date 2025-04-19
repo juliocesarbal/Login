@@ -6,17 +6,39 @@ const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const response = await fetch(`${API_URL}/users`);
-        const data = await response.json();
-        setUsuarios(data);
-      } catch (error) {
-        console.error("Error al cargar usuarios:", error);
-      }
-    };
     fetchUsuarios();
   }, []);
+
+  const fetchUsuarios = async () => {
+    try {
+      const response = await fetch(`${API_URL}/users`);
+      const data = await response.json();
+      setUsuarios(data);
+    } catch (error) {
+      console.error("Error al cargar usuarios:", error);
+    }
+  };
+
+  const handleDelete = async (ci) => {
+    if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
+
+    try {
+      const response = await fetch(`${API_URL}/users/ci/${ci}`, {
+        method: "DELETE",
+      });
+
+      if (response.status === 204) {
+        alert("Usuario eliminado exitosamente");
+        setUsuarios((prev) => prev.filter((u) => u.ci !== ci)); // elimina del estado
+      } else {
+        const errorData = await response.json();
+        alert("Error: " + errorData.message);
+      }
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert("Error del servidor");
+    }
+  };
 
   return (
     <div className="usuarios-container">
@@ -47,7 +69,12 @@ const Usuarios = () => {
                 <td>{usuario.rol}</td>
                 <td>
                   <button className="edit-btn">Editar</button>
-                  <button className="delete-btn">Eliminar</button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(usuario.ci)}
+                  >
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}
