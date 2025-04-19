@@ -222,7 +222,6 @@ const Register = () => {
         </select>
         {errors.id_rol && <span>{errors.id_rol}</span>}
       </div>
-      <input type="button" value="" />
 
       <button disabled={isDisabled} id="buttonLogIn">Crear cuenta</button>
       <div className="urlclass">
