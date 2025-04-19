@@ -40,6 +40,7 @@ const Home = () => {
           </div>
         ))}
       </div>
+      <input type="text" />
 
       <button className="buttonHome" onClick={handleLogOut}>
         Cerrar sesión
