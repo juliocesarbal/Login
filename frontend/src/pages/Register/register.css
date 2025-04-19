@@ -1,0 +1,119 @@
+/* Fondo general */
+body {
+    background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Estilo del formulario */
+  .formclass {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+    padding: 2rem;
+    width: 90%;
+    max-width: 400px;
+    margin: 4rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #222;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Campos */
+  .Inputclass {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .Inputclass input,
+  .Inputclass select {
+    flex: 1;
+    padding: 0.7rem 2.5rem 0.7rem 2.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    color: #222;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  
+  .Inputclass input::placeholder,
+  .Inputclass select option {
+    color: #666;
+  }
+  
+  .icon {
+    position: absolute;
+    left: 15px;
+    color: #666;
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 15px;
+    color: #666;
+    cursor: pointer;
+  }
+  
+  /* Errores */
+  .Inputclass span {
+    position: absolute;
+    bottom: -18px;
+    left: 15px;
+    font-size: 0.75rem;
+    color: #c0392b;
+  }
+  
+  /* Botón */
+  #buttonLogIn {
+    margin-top: 1rem;
+    padding: 0.7rem 2rem;
+    border: none;
+    border-radius: 30px;
+    background-color: #4b6cb7;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  
+  #buttonLogIn:disabled {
+    background-color: #a4b0be;
+    cursor: not-allowed;
+  }
+  
+  /* Enlace inferior */
+  .urlclass {
+    margin-top: 1rem;
+  }
+  
+  #link {
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  #link:hover {
+    color: #2c3e50;
+  }
+  
