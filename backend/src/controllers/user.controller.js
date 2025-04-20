@@ -196,10 +196,18 @@ export const createUser = async (req, res) => {
 
   export const deleteUser = async (req, res) => {
     const { ci } = req.params;
-  
     try {
+       const userRes = await pool.query('SELECT id FROM usuario WHERE ci = $1', [ci]);
+        if (userRes.rowCount === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado con ese CI" });
+      }
+
+        const userId = userRes.rows[0].id;
+
+      // Borrar de permiso_usuario
+        await pool.query('DELETE FROM permiso_usuario WHERE id_usuario = $1', [userId]);
       const { rowCount } = await pool.query(
-        'DELETE FROM usuario WHERE ci = $1 RETURNING *',
+        'DELETE FROM usuario WHERE ci = $1',
         [ci]
       );
   

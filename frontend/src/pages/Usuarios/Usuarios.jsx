@@ -23,12 +23,12 @@ const Usuarios = () => {
 
   const handleDelete = async (ci) => {
     if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
-
+  
     try {
       const response = await fetch(`${API_URL}/users/ci/${ci}`, {
         method: "DELETE",
       });
-
+  
       if (response.status === 204) {
         alert("Usuario eliminado exitosamente");
         setUsuarios((prev) => prev.filter((u) => u.ci !== ci));
@@ -41,6 +41,7 @@ const Usuarios = () => {
       alert("Error del servidor");
     }
   };
+  
 
   const handleCloseModal = () => {
     setUsuarioEditando(null);

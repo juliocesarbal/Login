@@ -32,7 +32,6 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
           const rolActual = rolesData.find(r => r.nombre === usuarioPermisosData.rol);
 
           setRolSeleccionado(rolActual?.id || "");
-          console.log("Rol actual detectado:", rolActual); // <-- Agrega esto
           if (rolActual?.nombre.toLowerCase() === "administrador") {
             setPermisosUsuario(new Set(permisosData.map(p => p.id)));
           }
