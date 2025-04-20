@@ -1,49 +1,125 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./home.css";
+import API_URL from "../../config/config";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [sucursal, setSucursal] = useState(null);
+  const [dispensadores, setDispensadores] = useState([]);
+  const [permisos, setPermisos] = useState([]);
 
   const handleLogOut = () => {
-    sessionStorage.removeItem("authToken");
+    sessionStorage.clear();
     navigate("/");
   };
 
-  const sections = [
-    { title: "Usuarios", description: "Gestión de cuentas y permisos." },
-    { title: "Surtidor", description: "Control de surtidores y mantenimiento." },
-    { title: "Compras", description: "Registro de compras a proveedores." },
-    { title: "Ventas", description: "Seguimiento de ventas realizadas." },
-    { title: "Inventario", description: "Gestión de productos y stock." },
-  ];
+  useEffect(() => {
+    // Cargar permisos del usuario
+    const usuarioId = sessionStorage.getItem("usuarioId");
 
-  const handleNavigate = (section) => {
-    const path = section.toLowerCase();
-    navigate(`/${path}`);
-  };
+    if (usuarioId) {
+      fetch(`${API_URL}/usuarios/permisos/${usuarioId}`)
+        .then((res) => res.json())
+        .then((data) => setPermisos(data.permisos.map((p) => p.nombre)))
+        .catch((err) =>
+          console.error("Error al cargar permisos del usuario:", err)
+        );
+    }
+
+    // Cargar datos de la sucursal
+    const sucursalData = {
+      id: sessionStorage.getItem("sucursalId"),
+      nombre: sessionStorage.getItem("sucursalNombre"),
+      direccion: sessionStorage.getItem("sucursalDireccion"),
+      telefono: sessionStorage.getItem("sucursalTelefono"),
+      correo: sessionStorage.getItem("sucursalCorreo"),
+      esta_suspendido: sessionStorage.getItem("sucursalSuspendida") === "true",
+    };
+
+    if (sucursalData.id) {
+      setSucursal(sucursalData);
+
+      fetch(`${API_URL}/infoSucursal?sucursalId=${sucursalData.id}`)
+        .then((res) => res.json())
+        .then((data) => setDispensadores(data))
+        .catch((err) =>
+          console.error("Error al cargar info de la sucursal:", err)
+        );
+    }
+  }, []);
 
   return (
-    <div id="divhome">
-      <h2 id="titleHome">WELCOME</h2>
+    <div className="dashboard-container">
 
-      <div className="home-sections">
-        {sections.map((section, index) => (
-          <div key={index} className="section-card">
-            <h3>{section.title}</h3>
-            <p>{section.description}</p>
-            <button
-              className="section-button"
-              onClick={() => handleNavigate(section.title)}
-            >
-              Ir a {section.title}
-            </button>
+      <main className="main-content">
+        <h1>Bienvenido a la Sucursal</h1>
+
+        {sucursal ? (
+          <div className="sucursal-info">
+            <h2>{sucursal.nombre}</h2>
+            <p>
+              <strong>Dirección:</strong> {sucursal.direccion}
+            </p>
+            <p>
+              <strong>Teléfono:</strong>{" "}
+              {sucursal.telefono || "No registrado"}
+            </p>
+            <p>
+              <strong>Correo:</strong> {sucursal.correo}
+            </p>
+            <p>
+              <strong>Estado:</strong>{" "}
+              <span
+                style={{
+                  color: sucursal.esta_suspendido ? "red" : "green",
+                }}
+              >
+                {sucursal.esta_suspendido ? "Suspendida" : "Activa"}
+              </span>
+            </p>
           </div>
-        ))}
-      </div>
+        ) : (
+          <p>Cargando datos de la sucursal...</p>
+        )}
 
-      <button className="buttonHome" onClick={handleLogOut}>
-        Cerrar sesión
-      </button>
+        {permisos.includes("ver_dashboard") && (
+          <section className="dispensadores-section">
+            <h2>Dispensadores de Combustible</h2>
+            {dispensadores.length > 0 ? (
+              <div className="dispensadores-grid">
+                {dispensadores.map((disp, idx) => (
+                  <div key={idx} className="dispensador-card">
+                    <h3>Ubicación: {disp.ubicacion}</h3>
+                    <p>
+                      <strong>Estado:</strong> {disp.estado}
+                    </p>
+                    <p>
+                      <strong>Capacidad máxima:</strong>{" "}
+                      {disp.capacidad_maxima} litros
+                    </p>
+                    <p>
+                      <strong>Combustible:</strong>{" "}
+                      {disp.combustible_nombre}
+                    </p>
+                    <p>
+                      <strong>Tipo:</strong> {disp.combustible_tipo}
+                    </p>
+                    {disp.combustible_octanaje && (
+                      <p>
+                        <strong>Octanaje:</strong>{" "}
+                        {disp.combustible_octanaje}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No se encontraron dispensadores para esta sucursal.</p>
+            )}
+          </section>
+        )}
+      </main>
     </div>
   );
 };

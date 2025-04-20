@@ -1,0 +1,71 @@
+.perfil-container {
+  background-color: #1e1e2f;
+  color: #e0e0e0;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.perfil-container h2 {
+  color: #00bcd4;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #2e2e40;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.1);
+}
+
+.perfil-form label {
+  display: flex;
+  flex-direction: column;
+  color: #e0e0e0;
+}
+
+.perfil-form input,
+.perfil-form select {
+  padding: 10px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #393d5a;
+  color: #fff;
+  margin-top: 4px;
+}
+
+.perfil-form input:disabled,
+.perfil-form select:disabled {
+  background-color: #2e2e40;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.perfil-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.perfil-actions button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #4fc3f7;
+  color: #000;
+}
+
+.perfil-actions button:hover {
+  background-color: #29b6f6;
+}
+
+.mensaje {
+  margin-top: 1rem;
+  color: #81d4fa;
+  font-weight: bold;
+}

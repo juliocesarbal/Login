@@ -32,53 +32,83 @@ export const getUsers = async (req, res) => {
 };
 
 
-export const loginProcess = async(req,res)=>{
+export const loginProcess = async (req, res) => {
   try {
-      const resultValidation = validationResult(req);
-      if(!resultValidation.isEmpty()){
-          return res.status(400).json({errors: resultValidation.array()});
-      }
-      const {name,password} = req.body;
+    const resultValidation = validationResult(req);
+    if (!resultValidation.isEmpty()) {
+      return res.status(400).json({ errors: resultValidation.array() });
+    }
 
-      const {rows} = await pool.query('SELECT * FROM usuario WHERE nombre = $1',[name]); 
+    const { name, password } = req.body;
 
-      if(rows.length === 0){
-          return res.status(400).json({
-              errors:[
-                  {
-                      path: "name",
-                      msg: "usuario no registrado",
-                  },
-              ],
-          });
-      }
+    // Obtener usuario con su sucursal relacionada
+    const { rows } = await pool.query(`
+      SELECT u.*, 
+             s.id AS sucursal_id,
+             s.nombre AS sucursal_nombre,
+             s.direccion AS sucursal_direccion,
+             s.telefono AS sucursal_telefono,
+             s.correo AS sucursal_correo,
+             s.esta_suspendido AS sucursal_suspendido
+      FROM usuario u
+      LEFT JOIN sucursal s ON u.id_sucursal = s.id
+      WHERE u.nombre = $1
+    `, [name]);
 
-      const userToLogin = rows[0];
-      const isOkThePassword = await bcryptjs.compare(password, userToLogin.contraseña); 
-      
-      if(isOkThePassword){
-          delete userToLogin.contraseña;
-          return res.status(200).json({
-              token: "simple-token-for-demo",
-              user: userToLogin,
-              message: "Inicio de sesion exitoso",
-          });
-      }
-
+    if (rows.length === 0) {
       return res.status(400).json({
-          errors:[
-              {
-                  path: "password",
-                  msg: "contraseña incorrecta",
-              },
-          ],
+        errors: [
+          {
+            path: "name",
+            msg: "usuario no registrado",
+          },
+        ],
       });
+    }
+
+    const userToLogin = rows[0];
+    const isOkThePassword = await bcryptjs.compare(password, userToLogin.contraseña);
+
+    if (isOkThePassword) {
+      delete userToLogin.contraseña;
+
+      // Estructura de sucursal para el front
+      const sucursal = {
+        id: userToLogin.sucursal_id,
+        nombre: userToLogin.sucursal_nombre,
+        direccion: userToLogin.sucursal_direccion,
+        telefono: userToLogin.sucursal_telefono,
+        correo: userToLogin.sucursal_correo,
+        esta_suspendido: userToLogin.sucursal_suspendido,
+      };
+
+      return res.status(200).json({
+        token: "simple-token-for-demo",
+        usuario: {
+          id: userToLogin.id,
+          nombre: userToLogin.nombre,
+          rol: userToLogin.rol, // si tienes ese campo
+          sucursal: sucursal,
+        },
+        message: "Inicio de sesión exitoso",
+      });
+    }
+
+    return res.status(400).json({
+      errors: [
+        {
+          path: "password",
+          msg: "contraseña incorrecta",
+        },
+      ],
+    });
 
   } catch (error) {
-      console.error("Error en login:", error); 
-      return res.status(500).json({ message: "Error interno del servidor" });
+    console.error("Error en login:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
 
 
 
@@ -183,15 +213,73 @@ export const createUser = async (req, res) => {
       return res.status(500).json({ message: "Error interno del servidor" });
     }
   };
-  
 
+export const asignarRolYPermisos = async (req, res) => {
+  const { id } = req.params; // id del usuario
+  const { rol_id, permisos_ids } = req.body;
 
-export const updateUser = async(req,res)=>{
-    const {id} =req.params;
-    const data = req.body;
-    const {rows} =await pool.query(
-        'UPDATE usuario SET name = $1 , email = $2 WHERE id=$3 RETURNING *',
-        [data.name,data.email,id]
+  try {
+    await pool.query("BEGIN");
+
+    // Actualizar el rol del usuario
+    await pool.query("UPDATE usuario SET id_rol = $1 WHERE id = $2", [rol_id, id]);
+
+    // Eliminar permisos anteriores del rol (opcional si deseas control manual)
+    await pool.query("DELETE FROM permiso_rol WHERE id_rol = $1", [rol_id]);
+
+    // Insertar nuevos permisos
+    for (const permiso_id of permisos_ids) {
+      await pool.query(
+        "INSERT INTO permiso_rol (id_rol, id_permiso) VALUES ($1, $2)",
+        [rol_id, permiso_id]
+      );
+    }
+
+    await pool.query("COMMIT");
+    res.json({ message: "Rol y permisos asignados correctamente" });
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.error(error);
+    res.status(500).json({ message: "Error al asignar rol y permisos" });
+  } finally {
+    pool.release();
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  try {
+    const { rows } = await pool.query(
+      `
+      UPDATE usuario 
+      SET 
+        nombre = $1,
+        correo = $2,
+        telefono = $3,
+        sexo = $4,
+        domicilio = $5
+      WHERE id = $6
+      RETURNING id, ci, nombre, correo, telefono, sexo, domicilio, id_sucursal, id_rol
+      `,
+      [
+        data.nombre,
+        data.correo,
+        data.telefono,
+        data.sexo,
+        data.domicilio,
+        id
+      ]
     );
-    return res.json(rows[0]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
 };

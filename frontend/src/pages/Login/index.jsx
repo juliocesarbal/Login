@@ -79,7 +79,23 @@ const Login =() =>{
       
           const data = await response.json();
           console.log("Login successful");
+      
           sessionStorage.setItem("authToken", data.token);
+          sessionStorage.setItem("usuarioId", data.usuario.id);
+
+
+          // ✅ Guardamos info útil para la homepage:
+          const { sucursal } = data.usuario;
+      
+          if (sucursal) {
+            sessionStorage.setItem("sucursalId", sucursal.id);
+            sessionStorage.setItem("sucursalNombre", sucursal.nombre);
+            sessionStorage.setItem("sucursalDireccion", sucursal.direccion);
+            sessionStorage.setItem("sucursalTelefono", sucursal.telefono);
+            sessionStorage.setItem("sucursalCorreo", sucursal.correo);
+            sessionStorage.setItem("sucursalSuspendida", sucursal.esta_suspendido);
+          }
+      
           navigate("/home");
       
         } catch (error) {

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import "./usuarios.css";
 import API_URL from "../../config/config";
+import ModalPermisos from "./ModalPermisos";
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
+  const [usuarioEditando, setUsuarioEditando] = useState(null);
 
   useEffect(() => {
     fetchUsuarios();
@@ -29,7 +31,7 @@ const Usuarios = () => {
 
       if (response.status === 204) {
         alert("Usuario eliminado exitosamente");
-        setUsuarios((prev) => prev.filter((u) => u.ci !== ci)); // elimina del estado
+        setUsuarios((prev) => prev.filter((u) => u.ci !== ci));
       } else {
         const errorData = await response.json();
         alert("Error: " + errorData.message);
@@ -38,6 +40,11 @@ const Usuarios = () => {
       console.error("Error al eliminar usuario:", error);
       alert("Error del servidor");
     }
+  };
+
+  const handleCloseModal = () => {
+    setUsuarioEditando(null);
+    fetchUsuarios(); // Refrescar lista tras cerrar el modal
   };
 
   return (
@@ -68,7 +75,12 @@ const Usuarios = () => {
                 <td>{usuario.sucursal}</td>
                 <td>{usuario.rol}</td>
                 <td>
-                  <button className="edit-btn">Editar</button>
+                  <button
+                    className="edit-btn"
+                    onClick={() => setUsuarioEditando(usuario)}
+                  >
+                    Editar
+                  </button>
                   <button
                     className="delete-btn"
                     onClick={() => handleDelete(usuario.ci)}
@@ -81,6 +93,13 @@ const Usuarios = () => {
           </tbody>
         </table>
       </div>
+
+      {usuarioEditando && (
+        <ModalPermisos
+          usuarioSeleccionado={usuarioEditando}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

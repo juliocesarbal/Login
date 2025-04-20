@@ -1,11 +1,13 @@
 import{Router} from "express";
-import { getSucursales,getRoles } from "../controllers/general.controller.js";
+import { getSucursales,getRoles,getInfoSucursal } from "../controllers/general.controller.js";
 
 
 const router = Router();
 
 
 router.get('/sucursales', getSucursales);
-router.get('/roles', getRoles);
+router.get('/infoSucursal', getInfoSucursal);
+
+  
 
 export default router;
