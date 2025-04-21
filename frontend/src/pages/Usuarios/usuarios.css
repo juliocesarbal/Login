@@ -1,177 +1,176 @@
+/* usuarios.css */
+
 .usuarios-container {
-  background-color: #1e1e2f;
-  color: #e0e0e0;
   padding: 2rem;
+  color: #f1f1f1;
 }
 
 .usuarios-title {
-  color: #00bcd4;
-  margin-bottom: 1.5rem;
   font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #00d1b2;
 }
 
 .tabla-usuarios-wrapper {
   overflow-x: auto;
-  background-color: #2e2e40;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 0 10px rgba(0, 188, 212, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  background-color: #2a2a2a;
 }
 
 .tabla-usuarios {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
+}
+
+.tabla-usuarios thead {
+  background-color: #1c1c1c;
 }
 
 .tabla-usuarios th,
 .tabla-usuarios td {
-  padding: 12px;
+  padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid #444;
 }
 
 .tabla-usuarios th {
-  background-color: #3a3d5b;
-  color: #ffffff;
+  color: #00d1b2;
+  font-weight: 600;
 }
 
-.tabla-usuarios td {
-  background-color: #393d5a;
-}
+
 
 .edit-btn,
 .delete-btn {
-  margin-right: 6px;
-  padding: 6px 12px;
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.4rem;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
 }
 
 .edit-btn {
-  background-color: #4fc3f7;
+  background-color: #00d1b2;
   color: #000;
 }
 
+.edit-btn:hover {
+  background-color: #00bfa4;
+}
+
 .delete-btn {
-  background-color: #f44336;
+  background-color: #ff5c5c;
   color: #fff;
 }
 
-.edit-btn:hover {
-  background-color: #29b6f6;
-}
-
 .delete-btn:hover {
-  background-color: #e53935;
+  background-color: #e04848;
 }
-/* modalPermisos.css */
+/* ModalPermisos.css */
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 15, 15, 0.8);
+  background-color: rgba(15, 15, 15, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 1000;
   backdrop-filter: blur(4px);
 }
 
 .modal-content {
-  background-color: #1e1e2f;
-  color: #f0f0f0;
+  background: rgba(40, 40, 40, 0.95);
   padding: 2rem;
-  border-radius: 1rem;
-  width: 90%;
+  border-radius: 16px;
   max-width: 500px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  animation: fadeIn 0.3s ease-in-out;
+  width: 90%;
+  color: #f1f1f1;
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
 }
 
 .modal-content h2 {
   margin-bottom: 1rem;
-  text-align: center;
   font-size: 1.5rem;
-  border-bottom: 1px solid #444;
-  padding-bottom: 0.5rem;
+  color: #00d1b2;
 }
 
 .modal-content label {
   display: block;
   margin-top: 1rem;
+  margin-bottom: 0.3rem;
   font-weight: 500;
 }
 
 .modal-content select {
   width: 100%;
   padding: 0.5rem;
-  margin-top: 0.5rem;
-  background-color: #2a2a3d;
-  color: #f0f0f0;
-  border: 1px solid #555;
-  border-radius: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #2d2d2d;
+  color: #f1f1f1;
+  margin-bottom: 1rem;
 }
 
 .permisos-lista {
-  margin-top: 1rem;
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #333;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  background-color: #2a2a3d;
+  border: 1px solid #444;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #1e1e1e;
 }
 
 .permiso-item {
-  display: block;
-  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
   font-size: 0.95rem;
 }
 
-.modal-buttons {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: space-between;
+.permiso-item input {
+  margin-right: 0.5rem;
 }
 
-.modal-buttons button {
-  padding: 0.5rem 1.5rem;
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.guardar-btn,
+.cerrar-btn {
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
   border: none;
-  border-radius: 0.5rem;
-  font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .guardar-btn {
-  background-color: #4caf50;
-  color: white;
+  background-color: #00d1b2;
+  color: #000;
 }
 
 .guardar-btn:hover {
-  background-color: #45a049;
+  background-color: #00bfa4;
 }
 
 .cerrar-btn {
-  background-color: #f44336;
-  color: white;
+  background-color: #777;
+  color: #fff;
 }
 
 .cerrar-btn:hover {
-  background-color: #e53935;
+  background-color: #555;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}

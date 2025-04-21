@@ -108,47 +108,60 @@ const Login =() =>{
         e.preventDefault();
         sendData();
       };
-    return (
-
-        <form className='formclass' onSubmit={handleSubmit} >
-        <h1>Iniciar sesion</h1>
-        <div className="Inputclass">
-             <FontAwesomeIcon icon={faUser} className='icon'/>
-             <input
-             type="text" 
-             name="name" 
-             placeholder="usuario"
-             onChange={handleChange} 
-             value={objData.name}
-             />
-             {errors && <span>{errors.name}</span>}
+      return (
+        <div className="login-wrapper">
+          <form className="login-form" onSubmit={handleSubmit}>
+            <h2 className="login-title">Bienvenidos a Octano</h2>
+            <p className="login-subtitle">Por favor ingrese sus datos</p>
+      
+            <div className="input-group">
+              <label htmlFor="name">Usuario</label>
+              <div className="input-icon">
+                <FontAwesomeIcon icon={faUser} className="icon" />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="usuario"
+                  autoComplete="off"
+                  onChange={handleChange}
+                  value={objData.name}
+                />
+              </div>
+              {errors && <span className="error">{errors.name}</span>}
+            </div>
+      
+            <div className="input-group">
+              <label htmlFor="password">Contraseña</label>
+              <div className="input-icon">
+                <FontAwesomeIcon icon={faLock} className="icon" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="contraseña"
+                  autoComplete="off"
+                  onChange={handleChange}
+                  value={objData.password}
+                />
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  className="eye-icon"
+                  onClick={togglePasswordVisibility}
+                />
+              </div>
+              {errors && <span className="error">{errors.password}</span>}
+            </div>
+      
+            <button disabled={isDisabled} className="login-button">
+              Iniciar sesión
+            </button>
+      
+            <div className="login-footer">
+              <Link to="/Register">Crear una cuenta</Link>
+            </div>
+          </form>
         </div>
-        <div className="Inputclass">
-            <FontAwesomeIcon icon={faLock} className='icon'/>
-            <input 
-            type={showPassword ? "text": "password"}
-            name="password"
-            id="passwordCreate" 
-            placeholder="contraseña"
-            onChange={handleChange}
-            value={objData.password}
-            />
-            {errors && <span>{errors.password}</span>}
-            <FontAwesomeIcon
-             icon={showPassword? faEyeSlash:faEye} 
-             className='eye-icon'
-             onClick={togglePasswordVisibility}
-            />
-        </div>
-        <button
-         disabled={isDisabled} 
-         id="buttonLogIn">iniciar
-         </button>
-        <div className="urlclass">
-            <Link to="/Register">crear una cuenta</Link> 
-        </div>        
-    </form>
-
-    );
+      );
+      
+      
 };
 export default Login;

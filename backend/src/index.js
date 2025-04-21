@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import generalRoutes from './routes/general.routes.js';
 import rolRoutes from './routes/rol.routes.js';
+import asistenciasRoutes from './routes/asistencia.routes.js';
 
 const corsOptions = {
     origin: "http://localhost:5173",
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use("/api",userRoutes);
 app.use("/api",generalRoutes);
 app.use("/api",rolRoutes);
+app.use("/api/asistencia",asistenciasRoutes);
 app.listen(PORT);
 console.log('server on port ',PORT);
 

@@ -6,6 +6,7 @@ import PrivateRoutes from "./PrivateRoutes.jsx";
 import Usuarios from "../pages/Usuarios/Usuarios.jsx";
 import Perfil from "../pages/Perfil/Perfil.jsx";
 import Layout from "../pages/Layaout/Layout.jsx";
+import RegistroAsistencia from "../pages/RegistroAsistencia/RegistroAsistencia.jsx";
 
 const Router = () => {
   return (
@@ -19,6 +20,7 @@ const Router = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/asistencias" element={<RegistroAsistencia />} />
         </Route>
       </Route>
     </Routes>

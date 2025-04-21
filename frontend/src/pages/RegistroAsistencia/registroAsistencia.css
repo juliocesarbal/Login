@@ -1,0 +1,55 @@
+/* Asistencia.css */
+
+.asistencia-container {
+  background-color: #1a1a1a;
+  color: #f1f1f1;
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 0 12px rgba(0, 255, 200, 0.15);
+}
+
+.asistencia-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #00d1b2;
+  font-size: 1.6rem;
+}
+
+.asistencia-info {
+  background-color: #2b2b2b;
+  padding: 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 255, 200, 0.1);
+}
+
+.asistencia-info p {
+  margin: 0.8rem 0;
+  font-size: 1rem;
+}
+
+.asistencia-btn {
+  margin-top: 1.5rem;
+  background-color: #00d1b2;
+  color: #000;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.asistencia-btn:hover {
+  background-color: #00bfa4;
+}
+
+.asistencia-btn:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  color: #ccc;
+}

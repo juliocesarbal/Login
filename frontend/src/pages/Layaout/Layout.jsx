@@ -44,6 +44,7 @@ const Layout = () => {
           {permisos.includes("gestionar_inventario") && (
             <li onClick={() => navigate("/inventario")}>Inventario</li>
           )}
+          <li onClick={() => navigate("/asistencias")}>Asistencias</li>
           <li onClick={() => navigate("/perfil")}>Perfil</li> {/* ✅ Nuevo botón */}
           <li onClick={handleLogOut}>Cerrar sesión</li>
         </ul>

@@ -50,13 +50,12 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="dashboard-container">
-
-      <main className="main-content">
-        <h1>Bienvenido a la Sucursal</h1>
-
+    <div className="home-wrapper">
+      <main className="home-main">
+        <h1 className="home-title">Bienvenido a la Sucursal</h1>
+  
         {sucursal ? (
-          <div className="sucursal-info">
+          <div className="home-sucursal-info">
             <h2>{sucursal.nombre}</h2>
             <p>
               <strong>Dirección:</strong> {sucursal.direccion}
@@ -80,48 +79,36 @@ const Home = () => {
             </p>
           </div>
         ) : (
-          <p>Cargando datos de la sucursal...</p>
+          <p className="home-loading">Cargando datos de la sucursal...</p>
         )}
-
+  
         {permisos.includes("ver_dashboard") && (
-          <section className="dispensadores-section">
+          <section className="home-dispensadores">
             <h2>Dispensadores de Combustible</h2>
             {dispensadores.length > 0 ? (
-              <div className="dispensadores-grid">
+              <div className="home-dispensadores-grid">
                 {dispensadores.map((disp, idx) => (
-                  <div key={idx} className="dispensador-card">
+                  <div key={idx} className="home-dispensador-card">
                     <h3>Ubicación: {disp.ubicacion}</h3>
-                    <p>
-                      <strong>Estado:</strong> {disp.estado}
-                    </p>
-                    <p>
-                      <strong>Capacidad máxima:</strong>{" "}
-                      {disp.capacidad_maxima} litros
-                    </p>
-                    <p>
-                      <strong>Combustible:</strong>{" "}
-                      {disp.combustible_nombre}
-                    </p>
-                    <p>
-                      <strong>Tipo:</strong> {disp.combustible_tipo}
-                    </p>
+                    <p><strong>Estado:</strong> {disp.estado}</p>
+                    <p><strong>Capacidad máxima:</strong> {disp.capacidad_maxima} litros</p>
+                    <p><strong>Combustible:</strong> {disp.combustible_nombre}</p>
+                    <p><strong>Tipo:</strong> {disp.combustible_tipo}</p>
                     {disp.combustible_octanaje && (
-                      <p>
-                        <strong>Octanaje:</strong>{" "}
-                        {disp.combustible_octanaje}
-                      </p>
+                      <p><strong>Octanaje:</strong> {disp.combustible_octanaje}</p>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <p>No se encontraron dispensadores para esta sucursal.</p>
+              <p className="home-empty">No se encontraron dispensadores para esta sucursal.</p>
             )}
           </section>
         )}
       </main>
     </div>
   );
+  
 };
 
 export default Home;

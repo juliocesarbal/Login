@@ -113,7 +113,8 @@ const Register = () => {
   };
 
   return (
-    <form className='formclass' onSubmit={handleSubmit}>
+    <div className="register-wrapper">
+    <form className='register-form' onSubmit={handleSubmit}>
       <h2 className="title">Crea una cuenta</h2>
       <div className="Inputclass">
     <FontAwesomeIcon icon={faUser} className='icon'/>
@@ -121,6 +122,7 @@ const Register = () => {
       type="text"
       name="ci"
       placeholder="Cédula de Identidad"
+      autoComplete="off"
       onChange={handleChange}
       value={objData.ci}
     />
@@ -133,6 +135,7 @@ const Register = () => {
       type="text"
       name="name"
       placeholder="Nombre de usuario"
+      autoComplete="off"
       onChange={handleChange}
       value={objData.name}
     />
@@ -145,14 +148,15 @@ const Register = () => {
       type="text"
       name="telefono"
       placeholder="Teléfono"
+      autoComplete="off"
       onChange={handleChange}
       value={objData.telefono}
     />
     {errors.telefono && <span>{errors.telefono}</span>}
   </div>
-      <div className="Inputclass">
+      <div className="Inputclass select-wrapper">
         <FontAwesomeIcon icon={faUser} className='icon' />
-        <select name="sexo" onChange={handleChange} value={objData.sexo}>
+        <select className="custom-select" name="sexo" onChange={handleChange} value={objData.sexo}>
           <option value="">Selecciona tu sexo</option>
           <option value="M">Masculino</option>
           <option value="F">Femenino</option>
@@ -165,6 +169,7 @@ const Register = () => {
       type="email"
       name="email"
       placeholder="Correo electrónico"
+      autoComplete="off"
       onChange={handleChange}
       value={objData.email}
     />
@@ -177,6 +182,7 @@ const Register = () => {
       type="text"
       name="domicilio"
       placeholder="Domicilio"
+      autoComplete="off"
       onChange={handleChange}
       value={objData.domicilio}
     />
@@ -188,6 +194,7 @@ const Register = () => {
       type={showPassword ? "text" : "password"}
       name="password"
       placeholder="Contraseña"
+      autoComplete="off"
       onChange={handleChange}
       value={objData.password}
     />
@@ -200,9 +207,9 @@ const Register = () => {
   </div>
 
       {/* Nueva sección dinámica de sucursales */}
-      <div className="Inputclass">
+      <div className="Inputclass select-wrapper">
         <FontAwesomeIcon icon={faUser} className='icon' />
-        <select name="id_sucursal" onChange={handleChange} value={objData.id_sucursal}>
+        <select className="custom-select" name="id_sucursal" onChange={handleChange} value={objData.id_sucursal}>
           <option value="">Selecciona una sucursal</option>
           {sucursales.map(s => (
             <option key={s.id} value={s.id}>{s.nombre}</option>
@@ -212,9 +219,9 @@ const Register = () => {
       </div>
 
       {/* Nueva sección dinámica de roles */}
-      <div className="Inputclass">
+      <div className="Inputclass select-wrapper">
         <FontAwesomeIcon icon={faUser} className='icon' />
-        <select name="id_rol" onChange={handleChange} value={objData.id_rol}>
+        <select className="custom-select" name="id_rol" onChange={handleChange} value={objData.id_rol}>
           <option value="">Selecciona un rol</option>
           {roles.map(r => (
             <option key={r.id} value={r.id}>{r.nombre}</option>
@@ -228,6 +235,7 @@ const Register = () => {
         <Link id='link' to="/">Iniciar sesión</Link>
       </div>
     </form>
+    </div>
   );
 };
 
