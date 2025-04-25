@@ -67,11 +67,24 @@
 
 .perfil-actions button:hover {
   background-color: #00bfa4;
+  box-shadow: 0 2px 6px rgba(0, 255, 200, 0.3);
 }
+
 
 .mensaje {
   text-align: center;
   margin-top: 1.5rem;
   color: #00ffcc;
   font-weight: bold;
+}
+.perfil-actions button {
+  display: inline-flex;         /* flex para alinear ícono + texto */
+  align-items: center;          /* centra verticalmente */
+  justify-content: center;
+  gap: 0.5rem;                  /* espacio entre ícono y texto */
+}
+
+.perfil-actions svg {
+  vertical-align: middle;
+  display: inline-block;
 }

@@ -1,4 +1,4 @@
-import {pool} from "../db.js";
+import { pool } from "../db.js";
 
 // Obtener todos los roles
 export const getRoles = async (req, res) => {
@@ -86,16 +86,16 @@ export const getPermisosPorUsuario = async (req, res) => {
   }
 };
 
-
-
-
 // Actualizar rol de un usuario
 export const actualizarRolUsuario = async (req, res) => {
   const { id } = req.params;
   const { id_rol } = req.body;
 
   try {
-    await pool.query("UPDATE usuario SET id_rol = $1 WHERE id = $2", [id_rol, id]);
+    await pool.query("UPDATE usuario SET id_rol = $1 WHERE id = $2", [
+      id_rol,
+      id,
+    ]);
     res.json({ message: "Rol actualizado correctamente" });
   } catch (error) {
     console.error("Error al actualizar rol:", error);
@@ -113,10 +113,15 @@ export const actualizarPermisosUsuario = async (req, res) => {
     await client.query("BEGIN");
 
     // Actualizar el rol del usuario
-    await client.query("UPDATE usuario SET id_rol = $1 WHERE id = $2", [id_rol, id]);
+    await client.query("UPDATE usuario SET id_rol = $1 WHERE id = $2", [
+      id_rol,
+      id,
+    ]);
 
     // Borrar permisos personalizados existentes del usuario
-    await client.query("DELETE FROM permiso_usuario WHERE id_usuario = $1", [id]);
+    await client.query("DELETE FROM permiso_usuario WHERE id_usuario = $1", [
+      id,
+    ]);
 
     // Insertar nuevos permisos personalizados
     for (const permisoId of permisosSeleccionados) {
@@ -131,9 +136,10 @@ export const actualizarPermisosUsuario = async (req, res) => {
   } catch (error) {
     await client.query("ROLLBACK");
     console.error("Error al actualizar permisos personalizados:", error);
-    res.status(500).json({ message: "Error al actualizar permisos personalizados" });
+    res
+      .status(500)
+      .json({ message: "Error al actualizar permisos personalizados" });
   } finally {
     client.release();
   }
 };
-

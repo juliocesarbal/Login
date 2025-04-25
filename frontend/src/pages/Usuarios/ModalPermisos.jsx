@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
+import "./modalPermisos.css";
 
 const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
   const [roles, setRoles] = useState([]);
@@ -11,31 +12,37 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
     if (usuarioSeleccionado) {
       const fetchDatos = async () => {
         try {
-          const [rolesRes, permisosRes, usuarioPermisosRes] = await Promise.all([
-            fetch(`${API_URL}/roles`),
-            fetch(`${API_URL}/permisos`),
-            fetch(`${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`),
-          ]);
+          const [rolesRes, permisosRes, usuarioPermisosRes] = await Promise.all(
+            [
+              fetch(`${API_URL}/roles`),
+              fetch(`${API_URL}/permisos`),
+              fetch(`${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`),
+            ]
+          );
 
-          const [rolesData, permisosData, usuarioPermisosData] = await Promise.all([
-            rolesRes.json(),
-            permisosRes.json(),
-            usuarioPermisosRes.json(),
-          ]);
+          const [rolesData, permisosData, usuarioPermisosData] =
+            await Promise.all([
+              rolesRes.json(),
+              permisosRes.json(),
+              usuarioPermisosRes.json(),
+            ]);
 
           setRoles(rolesData);
           setPermisos(permisosData);
 
-          const permisosDelUsuario = new Set(usuarioPermisosData.permisos.map((p) => p.id));
+          const permisosDelUsuario = new Set(
+            usuarioPermisosData.permisos.map((p) => p.id)
+          );
           setPermisosUsuario(permisosDelUsuario);
 
-          const rolActual = rolesData.find(r => r.nombre === usuarioPermisosData.rol);
+          const rolActual = rolesData.find(
+            (r) => r.nombre === usuarioPermisosData.rol
+          );
 
           setRolSeleccionado(rolActual?.id || "");
           if (rolActual?.nombre.toLowerCase() === "administrador") {
-            setPermisosUsuario(new Set(permisosData.map(p => p.id)));
+            setPermisosUsuario(new Set(permisosData.map((p) => p.id)));
           }
-
         } catch (error) {
           console.error("Error al cargar datos del modal:", error);
         }
@@ -57,28 +64,29 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
 
   const handleGuardar = async () => {
     try {
-      console.log("➡️ Enviando body:", {
-        id_rol: rolSeleccionado,
-        permisosSeleccionados: Array.from(permisosUsuario),
-      });
       if (!rolSeleccionado) {
         alert("Debe seleccionar un rol antes de guardar.");
         return;
       }
-      const response = await fetch(`${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_rol: rolSeleccionado,
-          permisosSeleccionados: Array.from(permisosUsuario),
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id_rol: rolSeleccionado,
+            permisosSeleccionados: Array.from(permisosUsuario),
+          }),
+        }
+      );
 
       if (response.ok) {
         alert("Permisos actualizados correctamente");
 
         // Actualizar rol mostrado en la tabla
-        const rolNombre = roles.find(r => r.id === rolSeleccionado)?.nombre || "Rol desconocido";
+        const rolNombre =
+          roles.find((r) => r.id === rolSeleccionado)?.nombre ||
+          "Rol desconocido";
         if (onRolActualizado) {
           onRolActualizado(usuarioSeleccionado.id, rolNombre);
         }
@@ -95,8 +103,8 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-permiso-overlay">
+      <div className="modal-permiso-content">
         <h2>Gestionar Permisos</h2>
 
         <label>Rol:</label>
@@ -113,14 +121,17 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
 
         <div className="permisos-lista">
           {permisos.map((permiso) => (
-            <label key={permiso.id} className="permiso-item">
-              <input
-                type="checkbox"
-                checked={permisosUsuario.has(permiso.id)}
-                onChange={() => handlePermisoChange(permiso.id)}
-              />
-              {permiso.nombre}
-            </label>
+            <div key={permiso.id} className="permiso-item">
+              <span>{permiso.nombre}</span>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={permisosUsuario.has(permiso.id)}
+                  onChange={() => handlePermisoChange(permiso.id)}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
           ))}
         </div>
 

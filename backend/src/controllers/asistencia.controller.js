@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 // Marcar entrada
 export const marcarEntrada = async (req, res) => {
   const { id_usuario } = req.body;
-
+  await pool.query("SET TIME ZONE 'America/La_Paz'");
   try {
     // Verificar si ya existe un registro hoy
     const existe = await pool.query(
@@ -32,7 +32,7 @@ export const marcarEntrada = async (req, res) => {
 // Marcar salida
 export const marcarSalida = async (req, res) => {
   const { id_usuario } = req.body;
-
+  await pool.query("SET TIME ZONE 'America/La_Paz'");
   try {
     const registro = await pool.query(
       "SELECT * FROM registro_asistencia WHERE id_usuario = $1 AND fecha = CURRENT_DATE",
@@ -40,7 +40,9 @@ export const marcarSalida = async (req, res) => {
     );
 
     if (registro.rows.length === 0) {
-      return res.status(404).json({ message: "No hay entrada registrada hoy." });
+      return res
+        .status(404)
+        .json({ message: "No hay entrada registrada hoy." });
     }
 
     if (registro.rows[0].hora_salida) {
@@ -66,7 +68,7 @@ export const marcarSalida = async (req, res) => {
 // Obtener el registro de hoy
 export const obtenerRegistroHoy = async (req, res) => {
   const { id_usuario } = req.params;
-
+  await pool.query("SET TIME ZONE 'America/La_Paz'");
   try {
     const result = await pool.query(
       `SELECT * FROM registro_asistencia
@@ -82,5 +84,51 @@ export const obtenerRegistroHoy = async (req, res) => {
   } catch (error) {
     console.error("Error al obtener registro de hoy:", error);
     res.status(500).json({ message: "Error al obtener registro de hoy" });
+  }
+};
+
+export const obtenerHistorialAsistencia = async (req, res) => {
+  const { id_usuario } = req.params;
+  await pool.query("SET TIME ZONE 'America/La_Paz'");
+  try {
+    const result = await pool.query(
+      `SELECT 
+        ra.fecha,
+        ra.hora_entrada,
+        ra.hora_salida,
+        ra.tiempo_trabajado,
+        u.nombre,
+        u.correo
+      FROM registro_asistencia ra
+      JOIN usuario u ON ra.id_usuario = u.id
+      WHERE ra.id_usuario = $1
+      ORDER BY ra.fecha DESC`,
+      [id_usuario]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al obtener historial de asistencia:", error);
+    res.status(500).json({ error: "Error al obtener historial" });
+  }
+};
+export const obtenerTodasLasAsistencia = async (req, res) => {
+  await pool.query("SET TIME ZONE 'America/La_Paz'");
+  try {
+    const result = await pool.query(
+      `SELECT 
+        ra.fecha,
+        ra.hora_entrada,
+        ra.hora_salida,
+        ra.tiempo_trabajado,
+        u.nombre,
+        u.correo
+      FROM registro_asistencia ra
+      JOIN usuario u ON ra.id_usuario = u.id
+      ORDER BY ra.fecha DESC`,
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al obtener historial de asistencia:", error);
+    res.status(500).json({ error: "Error al obtener historial" });
   }
 };

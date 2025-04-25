@@ -40,8 +40,6 @@
   font-weight: 600;
 }
 
-
-
 .edit-btn,
 .delete-btn {
   padding: 0.4rem 0.8rem;
@@ -70,107 +68,23 @@
 .delete-btn:hover {
   background-color: #e04848;
 }
-/* ModalPermisos.css */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(15, 15, 15, 0.85);
+.crear-usuario-btn-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
-}
-
-.modal-content {
-  background: rgba(40, 40, 40, 0.95);
-  padding: 2rem;
-  border-radius: 16px;
-  max-width: 500px;
-  width: 90%;
-  color: #f1f1f1;
-  box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
-}
-
-.modal-content h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #00d1b2;
-}
-
-.modal-content label {
-  display: block;
-  margin-top: 1rem;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
-}
-
-.modal-content select {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: none;
-  background-color: #2d2d2d;
-  color: #f1f1f1;
+  justify-content: flex-start; /* alineación a la izquierda */
   margin-bottom: 1rem;
 }
 
-.permisos-lista {
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #444;
-  padding: 0.5rem;
-  border-radius: 8px;
-  background-color: #1e1e1e;
-}
-
-.permiso-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.4rem;
-  font-size: 0.95rem;
-}
-
-.permiso-item input {
-  margin-right: 0.5rem;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-}
-
-.guardar-btn,
-.cerrar-btn {
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.guardar-btn {
+.crear-usuario-btn {
   background-color: #00d1b2;
   color: #000;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
-.guardar-btn:hover {
+.crear-usuario-btn:hover {
   background-color: #00bfa4;
-}
-
-.cerrar-btn {
-  background-color: #777;
-  color: #fff;
-}
-
-.cerrar-btn:hover {
-  background-color: #555;
 }
 

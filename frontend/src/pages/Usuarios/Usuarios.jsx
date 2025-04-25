@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; // <-- importar Link
 import "./usuarios.css";
 import API_URL from "../../config/config";
 import ModalPermisos from "./ModalPermisos";
+import ModalCreateUser from "./ModalCreateUser";
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [usuarioEditando, setUsuarioEditando] = useState(null);
+  const [modalCrearAbierto, setModalCrearAbierto] = useState(false);
+
 
   useEffect(() => {
     fetchUsuarios();
@@ -23,12 +27,12 @@ const Usuarios = () => {
 
   const handleDelete = async (ci) => {
     if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
-  
+
     try {
       const response = await fetch(`${API_URL}/users/ci/${ci}`, {
         method: "DELETE",
       });
-  
+
       if (response.status === 204) {
         alert("Usuario eliminado exitosamente");
         setUsuarios((prev) => prev.filter((u) => u.ci !== ci));
@@ -41,16 +45,25 @@ const Usuarios = () => {
       alert("Error del servidor");
     }
   };
-  
 
   const handleCloseModal = () => {
     setUsuarioEditando(null);
-    fetchUsuarios(); // Refrescar lista tras cerrar el modal
+    fetchUsuarios();
   };
 
   return (
     <div className="usuarios-container">
       <h2 className="usuarios-title">Gestión de Usuarios</h2>
+
+      <div className="crear-usuario-btn-wrapper">
+        <button
+          className="crear-usuario-btn"
+          onClick={() => setModalCrearAbierto(true)}
+        >
+          + Crear una cuenta
+        </button>
+      </div>
+
       <div className="tabla-usuarios-wrapper">
         <table className="tabla-usuarios">
           <thead>
@@ -80,7 +93,7 @@ const Usuarios = () => {
                     className="edit-btn"
                     onClick={() => setUsuarioEditando(usuario)}
                   >
-                    Editar
+                    Permisos
                   </button>
                   <button
                     className="delete-btn"
@@ -100,6 +113,12 @@ const Usuarios = () => {
           usuarioSeleccionado={usuarioEditando}
           onClose={handleCloseModal}
         />
+      )}
+      {modalCrearAbierto && (
+        <ModalCreateUser
+        onClose={() => setModalCrearAbierto(false)}
+        onUserCreated={() => fetchUsuarios()}
+      />      
       )}
     </div>
   );

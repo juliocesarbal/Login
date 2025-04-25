@@ -1,16 +1,15 @@
-import { Navigate,Outlet } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoutes =() =>{
+const PrivateRoutes = () => {
+  const getToken = () => {
+    return sessionStorage.getItem("authToken");
+  };
+  const token = getToken();
 
-    const getToken = () =>{
-        return sessionStorage.getItem("authToken");
-    }
-    const token = getToken();
-
-    if(token){
-        return <Outlet/>;
-    }else{
-        return <Navigate to="/"/>
-    };
+  if (token) {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/" />;
+  }
 };
-export default PrivateRoutes
+export default PrivateRoutes;

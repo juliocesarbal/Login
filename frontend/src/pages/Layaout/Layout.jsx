@@ -1,12 +1,13 @@
-// src/components/Layout.jsx
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "./layout.css"; // puedes copiar tus estilos ahí
+import "./layout.css";
 import API_URL from "../../config/config";
 
 const Layout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [permisos, setPermisos] = useState([]);
+  const [gestionarOpen, setGestionarOpen] = useState(false);
 
   const handleLogOut = () => {
     sessionStorage.clear();
@@ -15,39 +16,119 @@ const Layout = () => {
 
   useEffect(() => {
     const usuarioId = sessionStorage.getItem("usuarioId");
-
     if (usuarioId) {
       fetch(`${API_URL}/usuarios/permisos/${usuarioId}`)
         .then((res) => res.json())
-        .then((data) => setPermisos(data.permisos.map((p) => p.nombre)))
-        .catch((err) => console.error("Error al cargar permisos:", err));
+        .then((data) =>
+          setPermisos(data.permisos.map((p) => p.nombre))
+        )
+        .catch((err) =>
+          console.error("Error al cargar permisos:", err)
+        );
     }
   }, []);
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div className="layout-container">
       <aside className="sidebar">
         <h2>Octano</h2>
-        <ul>
+        <ul className="menu">
           {permisos.includes("ver_dashboard") && (
-            <li onClick={() => navigate("/home")}>Dashboard</li>
+            <li
+              className={isActive("/home") ? "active" : ""}
+              onClick={() => navigate("/home")}
+            >
+              Dashboard
+            </li>
           )}
-          {permisos.includes("gestionar_usuarios") && (
-            <li onClick={() => navigate("/usuarios")}>Usuarios</li>
+
+          {(permisos.includes("gestionar_usuarios") ||
+            permisos.includes("gestionar_proveedores") ||
+            permisos.includes("gestionar_compras") ||
+            permisos.includes("gestionar_ventas") ||
+            permisos.includes("gestionar_inventario") ||
+            permisos.includes("gestionar_ofertas")) && (
+            <>
+              <li
+                className="submenu-title"
+                onClick={() => setGestionarOpen(!gestionarOpen)}
+              >
+                Gestionar ▾
+              </li>
+              {gestionarOpen && (
+                <ul className="submenu">
+                  {permisos.includes("gestionar_usuarios") && (
+                    <li
+                      className={isActive("/usuarios") ? "active" : ""}
+                      onClick={() => navigate("/usuarios")}
+                    >
+                      Usuarios
+                    </li>
+                  )}
+                  {permisos.includes("gestionar_proveedores") && (
+                    <li
+                      className={isActive("/proveedores") ? "active" : ""}
+                      onClick={() => navigate("/proveedores")}
+                    >
+                      Proveedores
+                    </li>
+                  )}
+                  {permisos.includes("gestionar_compras") && (
+                    <li
+                      className={isActive("/compras") ? "active" : ""}
+                      onClick={() => navigate("/compras")}
+                    >
+                      Compras
+                    </li>
+                  )}
+                  {permisos.includes("gestionar_ventas") && (
+                    <li
+                      className={isActive("/ventas") ? "active" : ""}
+                      onClick={() => navigate("/ventas")}
+                    >
+                      Ventas
+                    </li>
+                  )}
+                  {permisos.includes("gestionar_inventario") && (
+                    <li
+                      className={isActive("/inventario") ? "active" : ""}
+                      onClick={() => navigate("/inventario")}
+                    >
+                      Inventario
+                    </li>
+                  )}
+                  {permisos.includes("gestionar_ofertas") && (
+                    <li
+                      className={isActive("/ofertas") ? "active" : ""}
+                      onClick={() => navigate("/ofertas")}
+                    >
+                      Descuentos
+                    </li>
+                  )}
+                </ul>
+              )}
+            </>
           )}
-          {permisos.includes("gestionar_compras") && (
-            <li onClick={() => navigate("/compras")}>Compras</li>
-          )}
-          {permisos.includes("gestionar_ventas") && (
-            <li onClick={() => navigate("/ventas")}>Ventas</li>
-          )}
-          {permisos.includes("gestionar_inventario") && (
-            <li onClick={() => navigate("/inventario")}>Inventario</li>
-          )}
-          <li onClick={() => navigate("/asistencias")}>Asistencias</li>
-          <li onClick={() => navigate("/perfil")}>Perfil</li> {/* ✅ Nuevo botón */}
-          <li onClick={handleLogOut}>Cerrar sesión</li>
+
+          <li
+            className={isActive("/asistencias") ? "active" : ""}
+            onClick={() => navigate("/asistencias")}
+          >
+            Asistencias
+          </li>
+          <li
+            className={isActive("/perfil") ? "active" : ""}
+            onClick={() => navigate("/perfil")}
+          >
+            Perfil
+          </li>
         </ul>
+
+        <div className="logout-section">
+          <li onClick={handleLogOut}>Cerrar sesión</li>
+        </div>
       </aside>
 
       <main className="main-content">

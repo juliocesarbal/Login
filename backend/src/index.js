@@ -1,35 +1,41 @@
 import express from "express";
-import {PORT} from "./config.js";
-import userRoutes from './routes/users.routes.js';
+import { PORT } from "./config.js";
+import userRoutes from "./routes/users.routes.js";
 import morgan from "morgan";
 import cors from "cors";
-import generalRoutes from './routes/general.routes.js';
-import rolRoutes from './routes/rol.routes.js';
-import asistenciasRoutes from './routes/asistencia.routes.js';
+import generalRoutes from "./routes/general.routes.js";
+import rolRoutes from "./routes/rol.routes.js";
+import asistenciasRoutes from "./routes/asistencia.routes.js";
+import categoriasRoutes from "./routes/categorias.routes.js";
+import combustibleRoutes from "./routes/combustible.routes.js";
+import proveedoresRoutes from "./routes/proveedores.routes.js";
+import productosRoutes from "./routes/productos.routes.js";
+import descuentosRoutes from "./routes/descuentos.routes.js";
 
 const corsOptions = {
-    origin: "http://localhost:5173",
-    methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-    allowedHearders: ["Content-Type"],
-    credentials: true,
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHearders: ["Content-Type"],
+  credentials: true,
 };
-
-
 
 const app = express();
 
 app.use(cors(corsOptions));
-app.options("*",cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(express.json());
-app.use("/api",userRoutes);
-app.use("/api",generalRoutes);
-app.use("/api",rolRoutes);
-app.use("/api/asistencia",asistenciasRoutes);
+app.use("/api", userRoutes);
+app.use("/api", generalRoutes);
+app.use("/api", rolRoutes);
+app.use("/api/asistencia", asistenciasRoutes);
+app.use("/api", categoriasRoutes);
+app.use("/api/combustibles", combustibleRoutes);
+app.use("/api/proveedores", proveedoresRoutes);
+app.use("/api/productos", productosRoutes);
+app.use("/api/descuentos",descuentosRoutes);
 app.listen(PORT);
-console.log('server on port ',PORT);
-
-
+console.log("server on port ", PORT);

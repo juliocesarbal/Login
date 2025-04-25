@@ -1,17 +1,12 @@
-
-import './styles.css';
-import  Router  from './Router/routes.jsx';
-
-
-
+import "./styles.css";
+import Router from "./Router/routes.jsx";
 
 function App() {
-
   return (
     <>
-     <Router/>
+      <Router />
     </>
-  )
-} 
+  );
+}
 
-export default App
+export default App;

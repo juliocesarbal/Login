@@ -5,7 +5,7 @@
   min-height: 100vh;
   background-color: #1e1e1e;
   color: #f1f1f1;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
 .sidebar {
@@ -45,9 +45,59 @@
   background-color: #00d1b2;
   color: #000;
 }
+.submenu {
+  list-style: none;
+  margin-left: 1rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid #00ffaa33;
+}
 
+.submenu li {
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+  color: #ccc;
+}
+
+.submenu-title {
+  font-weight: bold;
+}
 .main-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
 }
+.logout-section {
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+}
+
+.logout-section li {
+  color: red;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.logout-section li:hover {
+  color: #ff5555;
+  background-color: #1e1e1e;
+}
+.menu li,
+.submenu li {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.menu li:hover,
+.submenu li:hover {
+  background: #333;
+}
+
+.menu li.active,
+.submenu li.active {
+  background: #2c9d8c;
+  color: #fff;
+  font-weight: 600;
+}
+
