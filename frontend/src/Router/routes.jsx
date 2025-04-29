@@ -4,7 +4,7 @@ import Home from "../pages/Home/index.jsx";
 import PrivateRoutes from "./PrivateRoutes.jsx";
 import Usuarios from "../pages/Usuarios/Usuarios.jsx";
 import Perfil from "../pages/Perfil/Perfil.jsx";
-import Layout from "../pages/Layaout/Layout.jsx";
+import Layout from "../pages/Layout/Layout.jsx";
 import RegistroAsistencia from "../pages/RegistroAsistencia/RegistroAsistencia.jsx";
 import Proveedores from "../pages/Proveedores/Proveedores.jsx";
 import Compras from "../pages/Compras/Compras.jsx";

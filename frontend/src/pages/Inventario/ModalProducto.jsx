@@ -29,6 +29,7 @@ const ModalProducto = ({
   });
 
   const inputRef = useRef();
+  const [previewImage, setPreviewImage] = useState("");
 
   const resetForm = () => {
     setForm({
@@ -106,15 +107,18 @@ const ModalProducto = ({
       iva,
       stock,
       stock_minimo,
+      url_image,
+      descripcion,
+      esta_activo,
+      proveedor_id,
+      oferta_id,
     } = form;
 
-    // Validar campos obligatorios
     if (!nombre || !unidad_medida || !precio_venta) {
       alert("Nombre, unidad y precio de venta son obligatorios.");
       return;
     }
 
-    // Validar números negativos
     if (
       precio_venta < 0 ||
       precio_compra < 0 ||
@@ -126,13 +130,30 @@ const ModalProducto = ({
       return;
     }
 
-    // Validar que stock mínimo no sea mayor o igual a stock
     if (parseFloat(stock_minimo) >= parseFloat(stock)) {
       alert("El stock mínimo debe ser menor al stock.");
       return;
     }
+    const formData = new FormData();
+    formData.append("nombre", nombre);
+    formData.append("unidad_medida", unidad_medida);
+    formData.append("precio_venta", precio_venta);
+    formData.append("precio_compra", precio_compra);
+    formData.append("iva", iva);
+    formData.append("stock", stock);
+    formData.append("stock_minimo", stock_minimo);
+    formData.append("descripcion", descripcion);
+    formData.append("esta_activo", esta_activo);
+    formData.append("proveedor_id", proveedor_id);
+    formData.append("oferta_id", oferta_id);
+    formData.append("categoria_id", categoriaId);
+    formData.append("sucursal_id", sucursalId);
 
-    onSubmit({ ...form, categoria_id: categoriaId, sucursal_id: sucursalId });
+    if (form.url_image instanceof File) {
+      formData.append("url_image", form.url_image); // aquí mandas el archivo real
+    }
+
+    onSubmit(formData);
   };
 
   if (!open) return null;
@@ -219,14 +240,30 @@ const ModalProducto = ({
           autoComplete="off"
         />
 
-        <label htmlFor="url_image">URL de imagen</label>
-        <input
-          id="url_image"
-          name="url_image"
-          value={form.url_image}
-          onChange={handleChange}
-          autoComplete="off"
-        />
+        <div className="image-upload-container">
+          <label htmlFor="url_image">Imagen</label>
+          <input
+            type="file"
+            id="url_image"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                setForm((prev) => ({
+                  ...prev,
+                  url_image: file,
+                }));
+                setPreviewImage(URL.createObjectURL(file));
+              }
+            }}
+          />
+
+          {form.url_image && (
+            <div className="preview-img">
+              <img src={previewImage} alt="Vista previa" />
+            </div>
+          )}
+        </div>
 
         <label htmlFor="descripcion">Descripción</label>
         <input
@@ -287,7 +324,7 @@ const ModalProducto = ({
               resetForm();
               onClose();
             }}
-            className="btn-cancelar"
+            className="btn-cancelar-producto"
           >
             Cancelar
           </button>

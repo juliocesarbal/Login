@@ -23,8 +23,11 @@ const RegistroAsistencia = () => {
       const data = await res.json();
       let asistencias = Array.isArray(data) ? data : [];
 
-      const hoy = new Date().toISOString().split("T")[0]; // formato YYYY-MM-DD
-      const existeHoy = asistencias.some((a) => a.fecha.startsWith(hoy));
+      const now = new Date();
+    now.setHours(now.getHours() - 4); // Ajustar a Bolivia (UTC-4)
+    const hoy = now.toISOString().split("T")[0]; // formato YYYY-MM-DD
+
+    const existeHoy = asistencias.some((a) => a.fecha.startsWith(hoy));
 
       // Si no hay asistencia de hoy, agregamos una fila "vacía" para marcarla
       if (!existeHoy) {
@@ -117,7 +120,8 @@ const RegistroAsistencia = () => {
 
   return (
     <div className="planilla-container">
-      <h2>Planilla de Asistencia</h2>
+      <h2 className="planilla-title">Planilla de Asistencia</h2>
+  
       {permisos.includes("gestionar_historial_asistencias") && (
         <div className="botones-historial">
           <button onClick={obtenerTodoElHistorial} className="btn-ver-todo">
@@ -128,47 +132,51 @@ const RegistroAsistencia = () => {
           </button>
         </div>
       )}
-
-      <table className="planilla-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Fecha</th>
-            <th>Hora Entrada</th>
-            <th>Hora Salida</th>
-            <th>Tiempo Trabajado</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {asistencias.map((asistencia, index) => (
-            <tr key={index}>
-              <td>{asistencia.nombre}</td>
-              <td>{asistencia.correo}</td>
-              <td>{formatearFecha(asistencia.fecha)}</td>
-              <td>{formatearHora(asistencia.hora_entrada) || "-"}</td>
-              <td>{formatearHora(asistencia.hora_salida) || "-"}</td>
-              <td>
-                {calcularTiempo(
-                  asistencia.hora_entrada,
-                  asistencia.hora_salida
-                ) || "-"}
-              </td>
-              <td>
-                {!asistencia.hora_entrada && asistencia.pendiente && (
-                  <button onClick={marcarEntrada}>Marcar llegada</button>
-                )}
-                {asistencia.hora_entrada && !asistencia.hora_salida && (
-                  <button onClick={marcarSalida}>Marcar salida</button>
-                )}
-              </td>
+  
+      <div className="tabla-responsive">
+        <table className="planilla-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Fecha</th>
+              <th>Hora Entrada</th>
+              <th>Hora Salida</th>
+              <th>Tiempo Trabajado</th>
+              <th>Acción</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {asistencias.map((asistencia, index) => (
+              <tr key={index}>
+                <td>{asistencia.nombre}</td>
+                <td>{asistencia.correo}</td>
+                <td>{formatearFecha(asistencia.fecha)}</td>
+                <td>{formatearHora(asistencia.hora_entrada) || "-"}</td>
+                <td>{formatearHora(asistencia.hora_salida) || "-"}</td>
+                <td>
+                  {calcularTiempo(
+                    asistencia.hora_entrada,
+                    asistencia.hora_salida
+                  ) || "-"}
+                </td>
+                <td>
+                  {!asistencia.hora_entrada && asistencia.pendiente && (
+                    <button onClick={marcarEntrada}>Marcar llegada</button>
+                  )}
+                  {asistencia.hora_entrada && !asistencia.hora_salida && (
+                    <button onClick={marcarSalida}>Marcar salida</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
+  
 };
 
 export default RegistroAsistencia;
+

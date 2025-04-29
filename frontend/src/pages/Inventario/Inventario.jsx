@@ -2,20 +2,20 @@ import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import "./inventario.css";
 import ModalProducto from "./ModalProducto.jsx";
+import ModalCategoria from "./ModalCategoria.jsx";
 
 const Inventario = () => {
   const [categorias, setCategorias] = useState([]);
   const [productosPorCategoria, setProductosPorCategoria] = useState({});
   const sucursalId = sessionStorage.getItem("sucursalId");
+  const [modalCategoriaAbierto, setModalCategoriaAbierto] = useState(false);
+  const [modoCategoria, setModoCategoria] = useState("crear"); // "crear" o "eliminar"
 
   const [nuevaCategoria, setNuevaCategoria] = useState({
     nombre: "",
     descripcion: "",
-    imagenUrl: "",
   });
 
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [mostrarEliminar, setMostrarEliminar] = useState(false);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
 
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -92,8 +92,7 @@ const Inventario = () => {
       });
 
       if (res.ok) {
-        setNuevaCategoria({ nombre: "", descripcion: "", imagenUrl: "" });
-        setMostrarFormulario(false);
+        setNuevaCategoria({ nombre: "", descripcion: "" });
         fetchCategoriasYProductos();
       } else {
         alert("No se pudo crear la categoría");
@@ -150,12 +149,10 @@ const Inventario = () => {
         modoProducto === "crear"
           ? `${API_URL}/productos`
           : `${API_URL}/productos/${productoSeleccionado.id}`;
-      datosProducto.sucursal_id = sucursalId;
 
       const res = await fetch(url, {
         method: metodo,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...datosProducto }),
+        body: datosProducto, // Importante: no ponemos headers
       });
 
       if (res.ok) {
@@ -168,6 +165,7 @@ const Inventario = () => {
       console.error("Error al guardar producto", err);
     }
   };
+
   const handleEliminarProducto = async (productoId) => {
     const confirmar = confirm("¿Estás seguro de eliminar este producto?");
     if (!confirmar) return;
@@ -190,76 +188,28 @@ const Inventario = () => {
   return (
     <div className="inventario-container">
       <h2>Inventario por Categoría</h2>
-
+  
       <div className="acciones-inventario">
         <button
-          onClick={() => setMostrarFormulario(!mostrarFormulario)}
+          onClick={() => {
+            setModoCategoria("crear");
+            setModalCategoriaAbierto(true);
+          }}
           className="btn-nueva-categoria"
         >
-          {mostrarFormulario ? "Cancelar" : "Nueva Categoría"}
+          Nueva Categoría
         </button>
         <button
-          onClick={() => setMostrarEliminar(!mostrarEliminar)}
+          onClick={() => {
+            setModoCategoria("eliminar");
+            setModalCategoriaAbierto(true);
+          }}
           className="btn-eliminar-categoria"
         >
-          {mostrarEliminar ? "Cancelar eliminación" : "Eliminar Categoría"}
+          Eliminar Categoría
         </button>
       </div>
-
-      {mostrarEliminar && (
-        <div className="form-eliminar-categoria">
-          <select
-            value={categoriaSeleccionada}
-            onChange={(e) => setCategoriaSeleccionada(e.target.value)}
-          >
-            <option value="">Seleccione una categoría</option>
-            {categorias.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.nombre}
-              </option>
-            ))}
-          </select>
-          <button onClick={handleEliminarCategoria}>Eliminar</button>
-        </div>
-      )}
-
-      {mostrarFormulario && (
-        <div className="form-nueva-categoria">
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={nuevaCategoria.nombre}
-            onChange={(e) =>
-              setNuevaCategoria({ ...nuevaCategoria, nombre: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Descripción"
-            value={nuevaCategoria.descripcion}
-            onChange={(e) =>
-              setNuevaCategoria({
-                ...nuevaCategoria,
-                descripcion: e.target.value,
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Imagen URL"
-            autoComplete="off"
-            value={nuevaCategoria.imagenUrl}
-            onChange={(e) =>
-              setNuevaCategoria({
-                ...nuevaCategoria,
-                imagenUrl: e.target.value,
-              })
-            }
-          />
-          <button onClick={handleCrearCategoria}>Guardar</button>
-        </div>
-      )}
-
+  
       {categorias.map((cat) => (
         <div key={cat.id} className="categoria-bloque">
           <div className="categoria-header">
@@ -272,46 +222,43 @@ const Inventario = () => {
             </button>
           </div>
           <p>{cat.descripcion}</p>
-
-          {cat.imagen_url && (
-            <img
-              src={cat.imagen_url}
-              className="imagenCategoria"
-              alt="imagen"
-            />
-          )}
+  
           <div className="productos-grid">
-            <div className="productos-grid">
-              {productosPorCategoria[cat.id]?.map((prod) => (
-                <div key={prod.id} className="producto-card">
-                  <img
-                    src={prod.url_image || "/default-product.png"}
-                    alt={prod.nombre}
-                  />
-                  <h4>{prod.nombre}</h4>
-                  <p>Stock: {prod.stock}</p>
-                  <p>Unidad: {prod.unidad_medida}</p>
-                  <p>Precio venta: Bs. {prod.precio_venta}</p>
-                  <div className="acciones-producto">
-                    <button
-                      className="btn-editar-producto"
-                      onClick={() => abrirModalEditarProducto(prod, cat.id)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn-eliminar-producto"
-                      onClick={() => handleEliminarProducto(prod.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
+            {productosPorCategoria[cat.id]?.map((prod) => (
+              <div key={prod.id} className="producto-card">
+                <img
+                  src={
+                    prod.url_image
+                      ? `${API_URL}/uploads/${prod.url_image}`
+                      : "/default-product.png"
+                  }
+                  alt={prod.nombre}
+                />
+                <h4>{prod.nombre}</h4>
+                <p>Stock: {prod.stock}</p>
+                <p>Unidad: {prod.unidad_medida}</p>
+                <p>Precio venta: Bs. {prod.precio_venta}</p>
+                <div className="acciones-producto">
+                  <button
+                    className="btn-editar-producto"
+                    onClick={() => abrirModalEditarProducto(prod, cat.id)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn-eliminar-producto"
+                    onClick={() => handleEliminarProducto(prod.id)}
+                  >
+                    Eliminar
+                  </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       ))}
+  
+      {/* Modal para crear o editar productos */}
       <ModalProducto
         open={modalAbierto}
         onClose={() => setModalAbierto(false)}
@@ -320,10 +267,26 @@ const Inventario = () => {
         proveedores={proveedores}
         ofertas={ofertas}
         categoriaId={categoriaParaProducto}
+        sucursalId={sucursalId}
         modo={modoProducto}
+      />
+  
+      {/* Modal para crear o eliminar categorías */}
+      <ModalCategoria
+        open={modalCategoriaAbierto}
+        onClose={() => setModalCategoriaAbierto(false)}
+        modo={modoCategoria}
+        nuevaCategoria={nuevaCategoria}
+        setNuevaCategoria={setNuevaCategoria}
+        categorias={categorias}
+        categoriaSeleccionada={categoriaSeleccionada}
+        setCategoriaSeleccionada={setCategoriaSeleccionada} 
+        onCrear={handleCrearCategoria}
+        onEliminar={handleEliminarCategoria}        
       />
     </div>
   );
+  
 };
 
 export default Inventario;

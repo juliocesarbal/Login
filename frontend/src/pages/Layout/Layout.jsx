@@ -8,6 +8,7 @@ const Layout = () => {
   const location = useLocation();
   const [permisos, setPermisos] = useState([]);
   const [gestionarOpen, setGestionarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLogOut = () => {
     sessionStorage.clear();
@@ -32,7 +33,16 @@ const Layout = () => {
 
   return (
     <div className="layout-container">
-      <aside className="sidebar">
+      {/* BOTÓN TOGGLE */}
+      <button
+        className="toggle-sidebar-btn"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        ☰
+      </button>
+
+      {/* SIDEBAR */}
+      <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <h2>Octano</h2>
         <ul className="menu">
           {permisos.includes("ver_dashboard") && (
@@ -131,6 +141,7 @@ const Layout = () => {
         </div>
       </aside>
 
+      {/* CONTENIDO PRINCIPAL */}
       <main className="main-content">
         <Outlet />
       </main>

@@ -149,4 +149,17 @@ button:hover {
 .btn-ver-todo-cerrar:hover {
   background-color: #c9302c;
 }
+/* NUEVO: Hacer la tabla responsive */
+.tabla-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.planilla-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #00d1b2;
+  font-size: 1.6rem;
+}
+
 

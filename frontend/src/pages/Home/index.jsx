@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ModalDispensador from "./ModalDispensador";
+import ModalManguera from "./ModalManguera.jsx";
 import "./home.css";
 import API_URL from "../../config/config";
 
@@ -9,25 +11,35 @@ const Home = () => {
   const [dispensadores, setDispensadores] = useState([]);
   const [permisos, setPermisos] = useState([]);
 
-  const handleLogOut = () => {
-    sessionStorage.clear();
-    navigate("/");
-  };
+  const [openModalManguera, setOpenModalManguera] = useState(false);
+  const [modoModalManguera, setModoModalManguera] = useState("crear");
+  const [nuevaManguera, setNuevaManguera] = useState({
+    esta_activo: true,
+    id_dispensador: "",
+  });
+  const [mangueraSeleccionada, setMangueraSeleccionada] = useState(null);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [modoModal, setModoModal] = useState("crear");
+  const [nuevoDispensador, setNuevoDispensador] = useState({
+    ubicacion: "",
+    capacidad_maxima: "",
+    estado: "Activo",
+  });
+  const [dispensadorSeleccionado, setDispensadorSeleccionado] = useState("");
+
+  
 
   useEffect(() => {
-    // Cargar permisos del usuario
     const usuarioId = sessionStorage.getItem("usuarioId");
 
     if (usuarioId) {
       fetch(`${API_URL}/usuarios/permisos/${usuarioId}`)
         .then((res) => res.json())
         .then((data) => setPermisos(data.permisos.map((p) => p.nombre)))
-        .catch((err) =>
-          console.error("Error al cargar permisos del usuario:", err)
-        );
+        .catch((err) => console.error("Error al cargar permisos:", err));
     }
 
-    // Cargar datos de la sucursal
     const sucursalData = {
       id: sessionStorage.getItem("sucursalId"),
       nombre: sessionStorage.getItem("sucursalNombre"),
@@ -39,10 +51,154 @@ const Home = () => {
 
     if (sucursalData.id) {
       setSucursal(sucursalData);
-
-    
+      cargarDispensadoresConMangueras(sucursalData.id);
     }
   }, []);
+
+  const cargarDispensadoresConMangueras = async (sucursalId) => {
+    try {
+      const res = await fetch(
+        `${API_URL}/dispensadores/sucursal/${sucursalId}`
+      );
+      const data = await res.json();
+
+      const dispensadoresConMangueras = await Promise.all(
+        data.map(async (dispensador) => {
+          const resMangueras = await fetch(
+            `${API_URL}/mangueras/dispensador/${dispensador.id}`
+          );
+          const mangueras = await resMangueras.json();
+          return { ...dispensador, mangueras };
+        })
+      );
+
+      setDispensadores(dispensadoresConMangueras);
+    } catch (error) {
+      console.error("Error al cargar dispensadores:", error);
+    }
+  };
+
+  // FUNCIONES DISPENSADOR
+
+  const handleEliminarDispensador = async (dispensadorId) => {
+    if (confirm("¿Seguro que deseas eliminar este dispensador?")) {
+      try {
+        await fetch(`${API_URL}/dispensadores/${dispensadorId}`, {
+          method: "DELETE",
+        });
+        cargarDispensadoresConMangueras(sucursal.id);
+      } catch (error) {
+        console.error("Error eliminando dispensador:", error);
+      }
+    }
+  };
+  const handleActualizarDispensador = async () => {
+    if (!dispensadorSeleccionado) return;
+
+    try {
+      await fetch(`${API_URL}/dispensadores/${dispensadorSeleccionado.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...nuevoDispensador,
+          capacidad_maxima: parseInt(nuevoDispensador.capacidad_maxima, 10),
+        }),
+      });
+      cargarDispensadoresConMangueras(sucursal.id);
+      setOpenModal(false);
+    } catch (error) {
+      console.error("Error actualizando dispensador:", error);
+    }
+  };
+
+  const handleEditarManguera = (manguera) => {
+    setModoModalManguera("editar");
+    setNuevaManguera({
+      esta_activo: manguera.esta_activo,
+      id_dispensador: manguera.id_dispensador,
+    });
+    setMangueraSeleccionada(manguera);
+    setOpenModalManguera(true);
+  };
+
+  const handleCrearManguera = async () => {
+    try {
+      await fetch(`${API_URL}/mangueras`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevaManguera),
+      });
+      cargarDispensadoresConMangueras(sucursal.id);
+      setOpenModalManguera(false);
+    } catch (error) {
+      console.error("Error creando manguera:", error);
+    }
+  };
+
+  const handleActualizarManguera = async () => {
+    if (!mangueraSeleccionada) return;
+
+    try {
+      await fetch(`${API_URL}/mangueras/${mangueraSeleccionada.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevaManguera),
+      });
+      cargarDispensadoresConMangueras(sucursal.id);
+      setOpenModalManguera(false);
+    } catch (error) {
+      console.error("Error actualizando manguera:", error);
+    }
+  };
+  const handleEliminarManguera = async (mangueraId) => {
+    if (confirm("¿Seguro que deseas eliminar esta manguera?")) {
+      try {
+        await fetch(`${API_URL}/mangueras/${mangueraId}`, {
+          method: "DELETE",
+        });
+        cargarDispensadoresConMangueras(sucursal.id);
+      } catch (error) {
+        console.error("Error eliminando manguera:", error);
+      }
+    }
+  };
+
+  const handleCrearDispensador = async () => {
+    try {
+      await fetch(`${API_URL}/dispensadores`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...nuevoDispensador,
+          capacidad_maxima: parseInt(nuevoDispensador.capacidad_maxima, 10),
+          id_sucursal: sucursal.id,
+        }),
+      });
+      cargarDispensadoresConMangueras(sucursal.id);
+    } catch (error) {
+      console.error("Error creando dispensador:", error);
+    }
+  };
+  const handleAbrirModalCrear = () => {
+    setModoModal("crear");
+    setNuevoDispensador({
+      ubicacion: "",
+      capacidad_maxima: "",
+      estado: "Activo",
+    });
+    setDispensadorSeleccionado(null); // ← importante limpiar selección
+    setOpenModal(true);
+  };
+  const handleEditarDispensador = (dispensador) => {
+    setModoModal("editar");
+    setNuevoDispensador({
+      ubicacion: dispensador.ubicacion,
+      capacidad_maxima: dispensador.capacidad_maxima,
+      estado: dispensador.estado,
+    });
+    setDispensadorSeleccionado(dispensador); // ← asignamos el dispensador actual
+    setOpenModal(true);
+  };
 
   return (
     <div className="home-wrapper">
@@ -64,9 +220,7 @@ const Home = () => {
             <p>
               <strong>Estado:</strong>{" "}
               <span
-                style={{
-                  color: sucursal.esta_suspendido ? "red" : "green",
-                }}
+                style={{ color: sucursal.esta_suspendido ? "red" : "green" }}
               >
                 {sucursal.esta_suspendido ? "Suspendida" : "Activa"}
               </span>
@@ -79,6 +233,10 @@ const Home = () => {
         {permisos.includes("ver_dashboard") && (
           <section className="home-dispensadores">
             <h2>Dispensadores de Combustible</h2>
+            <button className="btn-crear" onClick={handleAbrirModalCrear}>
+              ➕ Nuevo Dispensador
+            </button>
+
             {dispensadores.length > 0 ? (
               <div className="home-dispensadores-grid">
                 {dispensadores.map((disp, idx) => (
@@ -89,18 +247,65 @@ const Home = () => {
                     </p>
                     <p>
                       <strong>Capacidad máxima:</strong> {disp.capacidad_maxima}{" "}
-                      litros
+                      m^3
                     </p>
-                    <p>
-                      <strong>Combustible:</strong> {disp.combustible_nombre}
-                    </p>
-                    <p>
-                      <strong>Tipo:</strong> {disp.combustible_tipo}
-                    </p>
-                    {disp.combustible_octanaje && (
-                      <p>
-                        <strong>Octanaje:</strong> {disp.combustible_octanaje}
-                      </p>
+                    <div className="dispensador-actions">
+                      <button
+                        onClick={() => handleEditarDispensador(disp)}
+                        className="btn-dispensador editar"
+                      >
+                        Editar Dispensador
+                      </button>
+                      <button
+                        onClick={() => handleEliminarDispensador(disp.id)}
+                        className="btn-dispensador eliminar"
+                      >
+                        Eliminar Dispensador
+                      </button>
+                      <button
+                        onClick={() => {
+                          setModoModalManguera("crear");
+                          setNuevaManguera({
+                            esta_activo: true,
+                            id_dispensador: disp.id,
+                          });
+                          setOpenModalManguera(true);
+                        }}
+                        className="btn-dispensador añadir"
+                      >
+                        Añadir Manguera
+                      </button>
+                    </div>
+                    <h4>Mangueras:</h4>
+                    {disp.mangueras.length > 0 ? (
+                      <ul>
+                        {disp.mangueras.map((manguera) => (
+                          <li key={manguera.id}>
+                            <div className="manguera-info">
+                              {manguera.esta_activo ? "✅" : "❌"} Manguera{" "}
+                              {manguera.id.slice(0, 8)}
+                            </div>
+                            <span className="manguera-actions">
+                              <button
+                                onClick={() => handleEditarManguera(manguera)}
+                                className="editar"
+                              >
+                                Editar
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleEliminarManguera(manguera.id)
+                                }
+                                className="eliminar"
+                              >
+                                Eliminar
+                              </button>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>Sin mangueras registradas.</p>
                     )}
                   </div>
                 ))}
@@ -113,6 +318,28 @@ const Home = () => {
           </section>
         )}
       </main>
+
+      <ModalDispensador
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        modo={modoModal}
+        nuevoDispensador={nuevoDispensador}
+        setNuevoDispensador={setNuevoDispensador}
+        dispensadorSeleccionado={dispensadorSeleccionado}
+        setDispensadorSeleccionado={setDispensadorSeleccionado}
+        onCrear={handleCrearDispensador}
+        onActualizar={handleActualizarDispensador}
+        dispensadores={dispensadores}
+      />
+      <ModalManguera
+        open={openModalManguera}
+        onClose={() => setOpenModalManguera(false)}
+        modo={modoModalManguera}
+        nuevaManguera={nuevaManguera}
+        setNuevaManguera={setNuevaManguera}
+        onCrear={handleCrearManguera}
+        onActualizar={handleActualizarManguera}
+      />
     </div>
   );
 };
