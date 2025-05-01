@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import "./registroAsistencia.css";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 
 
 const RegistroAsistencia = () => {
@@ -181,7 +180,6 @@ const RegistroAsistencia = () => {
           </tbody>
         </table>
       </div>
-      <ToastContainer/>
     </div>
   );
 };

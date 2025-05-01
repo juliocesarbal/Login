@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import { Pencil, Save, X } from "lucide-react"; 
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 import "./perfil.css";
 
 const Perfil = () => {
@@ -183,7 +182,6 @@ const Perfil = () => {
           </button>
         )}
       </div>
-        <ToastContainer/>
     </div>
   );
 };

@@ -3,7 +3,6 @@ import "./proveedores.css";
 import API_URL from "../../config/config";
 import ModalProveedor from "./ModalProveedor";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 import {
   mostrarConfirmacion,
   mostrarExito,
@@ -25,7 +24,7 @@ const Proveedores = () => {
       setProveedores(data);
     } catch (error) {
       console.error("Error al cargar proveedores:", error);
-      showToast("error", "Error al obtener los proveedores");
+      showToast("warning", "Error al obtener los proveedores");
     }
   };
 
@@ -143,7 +142,6 @@ const Proveedores = () => {
           onSubmit={handleGuardarProveedor}
         />
       )}
-      <ToastContainer />
     </div>
   );
 };

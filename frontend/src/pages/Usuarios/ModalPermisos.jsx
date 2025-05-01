@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import "./modalPermisos.css";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 
 const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
   const [roles, setRoles] = useState([]);
@@ -147,7 +146,6 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
           </button>
         </div>
       </div>
-      <ToastContainer/>
     </div>
   );
 };

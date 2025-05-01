@@ -4,7 +4,6 @@ import API_URL from "../../config/config";
 import ModalPermisos from "./ModalPermisos";
 import ModalCreateUser from "./ModalCreateUser";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 import {
   mostrarConfirmacion,
   mostrarExito,
@@ -132,7 +131,6 @@ const Usuarios = () => {
           onUserCreated={() => fetchUsuarios()}
         />
       )}
-      <ToastContainer/>
     </div>
   );
 };

@@ -10,7 +10,6 @@ import {
   mostrarError,
 } from "../../utils/alertUtils";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -379,7 +378,6 @@ const Home = () => {
         onCrear={handleCrearManguera}
         onActualizar={handleActualizarManguera}
       />
-      <ToastContainer/>
     </div>
   );
 };

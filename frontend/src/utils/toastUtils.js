@@ -13,7 +13,7 @@ export const showToast = (type, message) => {
     theme: "dark",
     transition: Bounce,
   };
-
+  
   switch (type) {
     case "success":
       toast.success(message, config);

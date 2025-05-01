@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./modalOfertas.css";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 
 const ModalOferta = ({
   ofertaSeleccionada,
@@ -115,7 +114,6 @@ const ModalOferta = ({
           </button>
         </div>
       </div>
-      <ToastContainer/>
     </div>
   );
 };

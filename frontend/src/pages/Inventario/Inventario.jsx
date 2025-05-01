@@ -3,7 +3,6 @@ import API_URL from "../../config/config";
 import "./inventario.css";
 import ModalProducto from "./ModalProducto.jsx";
 import ModalCategoria from "./ModalCategoria.jsx";
-import { ToastContainer } from "react-toastify";
 import { showToast } from "../../utils/toastUtils";
 import {
   mostrarConfirmacion,
@@ -172,15 +171,14 @@ const Inventario = () => {
       });
 
       if (res.ok) {
-        metodo === "crear"
+        modoProducto === "crear"
           ? showToast("success", "Producto crado con éxito")
           : showToast("success", "Producto actualizado con éxito");
-        showToast("success", "Categoria crada con éxito");
         fetchCategoriasYProductos();
         setModalAbierto(false);
       } else {
         alert("Error al guardar producto");
-        metodo === "crear"
+        modoProducto === "crear"
           ? showToast("error", "Producto crado sin éxito")
           : showToast("error", "Producto actualizado sin éxito");
       }
@@ -316,7 +314,6 @@ const Inventario = () => {
         onCrear={handleCrearCategoria}
         onEliminar={handleEliminarCategoria}
       />
-      <ToastContainer />
     </div>
   );
 };

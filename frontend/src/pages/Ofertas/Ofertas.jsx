@@ -3,7 +3,6 @@ import "./ofertas.css";
 import API_URL from "../../config/config.js";
 import ModalOferta from "./ModalOfertas.jsx";
 import { showToast } from "../../utils/toastUtils";
-import { ToastContainer } from "react-toastify";
 import {
   mostrarConfirmacion,
   mostrarExito,
@@ -68,10 +67,10 @@ const Ofertas = () => {
 
       if (!res.ok) {
         showToast("error", "Descuento creado sin éxito");
+        return;
       }
-
-      fetchOfertas();
       showToast("success", "Descuento creado con éxito");
+      fetchOfertas();
     } catch (error) {
       console.error("Error al crear oferta:", error);
       showToast("error", "Descuento creado sin éxito");
@@ -90,10 +89,10 @@ const Ofertas = () => {
 
       if (!res.ok) {
         showToast("error", "Descuento actualizado sin éxito");
+        return;
       }
-
-      fetchOfertas();
-      showToast("success", "Descuento actualizado con éxito");
+      showToast("success", "Descueto actualizado con éxito");
+      handleCloseModal();
     } catch (error) {
       console.error("Error al actualizar oferta:", error);
       showToast("error", "Descuento actualizado sin éxito");
@@ -157,7 +156,6 @@ const Ofertas = () => {
           onActualizar={actualizarOferta}
         />
       )}
-      <ToastContainer />
     </div>
   );
 };
