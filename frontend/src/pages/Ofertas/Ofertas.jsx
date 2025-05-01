@@ -25,7 +25,7 @@ const Ofertas = () => {
       setOfertas(data);
     } catch (error) {
       console.error("Error al cargar ofertas:", error);
-      showToast("error", "error al obtener descuentos");
+      showToast("warning", "error al obtener descuentos");
     }
   };
 

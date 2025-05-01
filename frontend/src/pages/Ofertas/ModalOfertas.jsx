@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "./modalOfertas.css";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
 
 const ModalOferta = ({
   ofertaSeleccionada,
@@ -36,12 +38,22 @@ const ModalOferta = ({
   };
 
   const handleSubmit = () => {
+    const porcentaje = parseFloat(formData.porcentaje);
+    if (isNaN(porcentaje) || porcentaje <= 0 || porcentaje > 100) {
+      showToast("warning", "El porcentaje debe ser mayor a 0 y menor o igual a 100.");
+      return;
+    }
     if (esEdicion) {
       onActualizar(ofertaSeleccionada.id, formData);
     } else {
       onCrear(formData);
     }
     onClose();
+  };
+  const preventInvalidNumberInput = (e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -74,9 +86,8 @@ const ModalOferta = ({
           <input
             name="porcentaje"
             type="number"
+            onKeyDown={preventInvalidNumberInput}
             onWheel={(e) => e.target.blur()}
-            min="1"
-            max="100"
             value={formData.porcentaje}
             onChange={handleChange}
           />
@@ -104,6 +115,7 @@ const ModalOferta = ({
           </button>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

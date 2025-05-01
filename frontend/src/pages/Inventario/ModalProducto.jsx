@@ -156,6 +156,12 @@ const ModalProducto = ({
     onSubmit(formData);
   };
 
+  const preventInvalidNumberInput = (e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -190,6 +196,7 @@ const ModalProducto = ({
           name="precio_venta"
           type="number"
           onWheel={(e) => e.target.blur()}
+          onKeyDown={preventInvalidNumberInput}
           className={!form.precio_venta ? "input-error" : ""}
           value={form.precio_venta}
           onChange={handleChange}
@@ -201,6 +208,7 @@ const ModalProducto = ({
           id="precio_compra"
           name="precio_compra"
           type="number"
+          onKeyDown={preventInvalidNumberInput}
           onWheel={(e) => e.target.blur()}
           value={form.precio_compra}
           onChange={handleChange}
@@ -212,6 +220,7 @@ const ModalProducto = ({
           id="iva"
           name="iva"
           type="number"
+          onKeyDown={preventInvalidNumberInput}
           onWheel={(e) => e.target.blur()}
           value={form.iva}
           onChange={handleChange}
@@ -223,6 +232,7 @@ const ModalProducto = ({
           id="stock"
           name="stock"
           type="number"
+          onKeyDown={preventInvalidNumberInput}
           onWheel={(e) => e.target.blur()}
           value={form.stock}
           onChange={handleChange}
@@ -234,6 +244,7 @@ const ModalProducto = ({
           id="stock_minimo"
           name="stock_minimo"
           type="number"
+          onKeyDown={preventInvalidNumberInput}
           onWheel={(e) => e.target.blur()}
           value={form.stock_minimo}
           onChange={handleChange}

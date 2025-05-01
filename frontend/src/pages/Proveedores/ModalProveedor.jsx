@@ -11,6 +11,11 @@ const ModalProveedor = ({ proveedorSeleccionado, onClose, onSubmit }) => {
     nit: "",
     detalle: "",
   });
+  const preventInvalidNumberInput = (e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   useEffect(() => {
     if (proveedorSeleccionado) {
@@ -50,6 +55,9 @@ const ModalProveedor = ({ proveedorSeleccionado, onClose, onSubmit }) => {
           <label>Teléfono:</label>
           <input
             name="telefono"
+            type="number"
+            onKeyDown={preventInvalidNumberInput}
+            onWheel={(e) => e.target.blur()}
             autoComplete="off"
             value={formData.telefono}
             onChange={handleChange}
@@ -77,6 +85,9 @@ const ModalProveedor = ({ proveedorSeleccionado, onClose, onSubmit }) => {
           <label>NIT:</label>
           <input
             name="nit"
+            type="number"
+            onKeyDown={preventInvalidNumberInput}
+            onWheel={(e) => e.target.blur()}
             autoComplete="off"
             value={formData.nit}
             onChange={handleChange}
