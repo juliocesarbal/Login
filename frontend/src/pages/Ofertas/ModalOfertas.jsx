@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import API_URL from "../../config/config";
-import './modalOfertas.css';
+import "./modalOfertas.css";
 
-const ModalOferta = ({ ofertaSeleccionada, onClose }) => {
+const ModalOferta = ({
+  ofertaSeleccionada,
+  onClose,
+  onCrear,
+  onActualizar,
+}) => {
   const esEdicion = !!ofertaSeleccionada?.id;
 
   const [formData, setFormData] = useState({
@@ -31,38 +35,20 @@ const ModalOferta = ({ ofertaSeleccionada, onClose }) => {
     }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      const url = esEdicion
-        ? `${API_URL}/descuentos/${ofertaSeleccionada.id}`
-        : `${API_URL}/descuentos`;
-
-      const method = esEdicion ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        throw new Error("Error al guardar la oferta");
-      }
-
-      onClose(); // Cierra modal y recarga lista
-    } catch (error) {
-      console.error("Error al guardar oferta:", error);
-      alert("Ocurrió un error al guardar la oferta");
+  const handleSubmit = () => {
+    if (esEdicion) {
+      onActualizar(ofertaSeleccionada.id, formData);
+    } else {
+      onCrear(formData);
     }
+    onClose();
   };
 
   return (
     <div className="modal-oferta-backdrop">
       <div className="modal-oferta-contenido">
         <h3>{esEdicion ? "Editar Descuento" : "Crear Descuento"}</h3>
-  
+
         <div className="form-group">
           <label>Nombre:</label>
           <input
@@ -72,16 +58,17 @@ const ModalOferta = ({ ofertaSeleccionada, onClose }) => {
             onChange={handleChange}
           />
         </div>
-  
+
         <div className="form-group">
           <label>Descripción:</label>
           <input
             name="descripcion"
+            autoComplete="off"
             value={formData.descripcion}
             onChange={handleChange}
           />
         </div>
-  
+
         <div className="form-group">
           <label>Porcentaje (%):</label>
           <input
@@ -94,7 +81,7 @@ const ModalOferta = ({ ofertaSeleccionada, onClose }) => {
             onChange={handleChange}
           />
         </div>
-  
+
         <div className="switch-group">
           <span>Activo</span>
           <label className="switch">
@@ -107,12 +94,12 @@ const ModalOferta = ({ ofertaSeleccionada, onClose }) => {
             <span className="slider"></span>
           </label>
         </div>
-  
-        <div className="modal-buttons">
-          <button className="save-btn" onClick={handleSubmit}>
+
+        <div className="modal-oferta-buttons">
+          <button className="save-oferta-btn" onClick={handleSubmit}>
             {esEdicion ? "Guardar" : "Crear"}
           </button>
-          <button className="btn-cancelar" onClick={onClose}>
+          <button className="btn-oferta-cancelar" onClick={onClose}>
             Cancelar
           </button>
         </div>

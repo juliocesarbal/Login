@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import API_URL from "../../config/config";
 
-const ModalProveedor = ({ proveedorSeleccionado, onClose }) => {
+const ModalProveedor = ({ proveedorSeleccionado, onClose, onSubmit }) => {
   const esEdicion = !!proveedorSeleccionado?.id;
 
   const [formData, setFormData] = useState({
@@ -32,33 +31,6 @@ const ModalProveedor = ({ proveedorSeleccionado, onClose }) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const url = esEdicion
-        ? `${API_URL}/proveedores/${proveedorSeleccionado.id}`
-        : `${API_URL}/proveedores`;
-
-      const method = esEdicion ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        throw new Error("Error al guardar el proveedor");
-      }
-
-      onClose(); // Cierra el modal y refresca
-    } catch (error) {
-      console.error("Error al guardar proveedor:", error);
-      alert("Ocurrió un error al guardar");
-    }
   };
 
   return (
@@ -119,8 +91,8 @@ const ModalProveedor = ({ proveedorSeleccionado, onClose }) => {
           />
         </div>
 
-        <div className="modal-buttons">
-          <button className="save-btn-pv" onClick={handleSubmit}>
+        <div className="modal-prv-buttons">
+        <button className="save-btn-pv" onClick={() => onSubmit(formData)}>
             {esEdicion ? "Guardar" : "Crear"}
           </button>
           <button className="cancel-btn-pv" onClick={onClose}>

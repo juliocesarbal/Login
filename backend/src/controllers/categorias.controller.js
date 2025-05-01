@@ -53,7 +53,7 @@ export const deleteCategoria = async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query("DELETE FROM categoria WHERE id = $1", [id]);
-    res.status(200).json({ mensaje: "Categoría eliminada con éxito" });
+    res.status(204).json({ mensaje: "Categoría eliminada con éxito" });
   } catch (error) {
     console.error("Error al eliminar categoría:", error);
     res.status(500).json({ error: "Error al eliminar categoría" });

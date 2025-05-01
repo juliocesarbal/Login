@@ -120,7 +120,7 @@
     transform: translateX(22px);
   }
   
-  .modal-buttons {
+  .modal-oferta-buttons {
     display: flex;
     justify-content: space-between;
     gap: 1rem;

@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import "./proveedores.css";
 import API_URL from "../../config/config";
-import ModalProveedor from "./ModalProveedor"; // Este modal lo crearemos también
+import ModalProveedor from "./ModalProveedor";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
+import {
+  mostrarConfirmacion,
+  mostrarExito,
+  mostrarError,
+} from "../../utils/alertUtils";
 
 const Proveedores = () => {
   const [proveedores, setProveedores] = useState([]);
@@ -18,11 +25,47 @@ const Proveedores = () => {
       setProveedores(data);
     } catch (error) {
       console.error("Error al cargar proveedores:", error);
+      showToast("error", "Error al obtener los proveedores");
+    }
+  };
+
+  const handleGuardarProveedor = async (formData) => {
+    const esEdicion = !!proveedorEditando?.id;
+    const url = esEdicion
+      ? `${API_URL}/proveedores/${proveedorEditando.id}`
+      : `${API_URL}/proveedores`;
+    const method = esEdicion ? "PUT" : "POST";
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        showToast("error", "Error al guardar el proveedor");
+        return;
+      }
+      esEdicion
+        ? showToast("success", "Proveedor actualizado con éxito")
+        : showToast("success", "Proveedor creado con éxito");
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error al guardar proveedor:", error);
+      showToast("error", "Error al guardar el proveedor");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar este proveedor?")) return;
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar proveedor?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch(`${API_URL}/proveedores/${id}`, {
@@ -30,15 +73,15 @@ const Proveedores = () => {
       });
 
       if (res.status === 204) {
-        alert("Proveedor eliminado exitosamente");
+        await mostrarExito("El proveedor ha sido eliminado.");
         setProveedores((prev) => prev.filter((p) => p.id !== id));
       } else {
         const err = await res.json();
-        alert("Error: " + err.message);
+        mostrarError(err.message);
       }
     } catch (err) {
       console.error("Error al eliminar proveedor:", err);
-      alert("Error del servidor");
+      mostrarError("Error del servidor");
     }
   };
 
@@ -97,8 +140,10 @@ const Proveedores = () => {
         <ModalProveedor
           proveedorSeleccionado={proveedorEditando}
           onClose={handleCloseModal}
+          onSubmit={handleGuardarProveedor}
         />
       )}
+      <ToastContainer />
     </div>
   );
 };

@@ -4,6 +4,13 @@ import ModalDispensador from "./ModalDispensador";
 import ModalManguera from "./ModalManguera.jsx";
 import "./home.css";
 import API_URL from "../../config/config";
+import {
+  mostrarConfirmacion,
+  mostrarExito,
+  mostrarError,
+} from "../../utils/alertUtils";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -27,8 +34,6 @@ const Home = () => {
     estado: "Activo",
   });
   const [dispensadorSeleccionado, setDispensadorSeleccionado] = useState("");
-
-  
 
   useEffect(() => {
     const usuarioId = sessionStorage.getItem("usuarioId");
@@ -75,23 +80,55 @@ const Home = () => {
       setDispensadores(dispensadoresConMangueras);
     } catch (error) {
       console.error("Error al cargar dispensadores:", error);
+      showToast("warning","error al obtener los dispensasdores")
     }
   };
-
   // FUNCIONES DISPENSADOR
 
   const handleEliminarDispensador = async (dispensadorId) => {
-    if (confirm("¿Seguro que deseas eliminar este dispensador?")) {
-      try {
-        await fetch(`${API_URL}/dispensadores/${dispensadorId}`, {
-          method: "DELETE",
-        });
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar dispensador?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
+
+    if (!result.isConfirmed) return;
+    try {
+      const res = await fetch(`${API_URL}/dispensadores/${dispensadorId}`, {
+        method: "DELETE",
+      });
+      if (res.status === 204) {
+        await mostrarExito("El dispensador ha sido eliminado.");
         cargarDispensadoresConMangueras(sucursal.id);
-      } catch (error) {
-        console.error("Error eliminando dispensador:", error);
+      } else {
+        const err = await res.json();
+        mostrarError(err.message);
       }
+    } catch (error) {
+      console.error("Error eliminando dispensador:", error);
+      mostrarError("Error del servidor");
     }
   };
+
+  const handleCrearDispensador = async () => {
+    try {
+      await fetch(`${API_URL}/dispensadores`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...nuevoDispensador,
+          capacidad_maxima: parseInt(nuevoDispensador.capacidad_maxima, 10),
+          id_sucursal: sucursal.id,
+        }),
+      });
+      showToast("success", "Dispensador creado con éxito");
+      cargarDispensadoresConMangueras(sucursal.id);
+    } catch (error) {
+      console.error("Error creando dispensador:", error);
+      showToast("error", "Dispensador creado sin éxito");
+    }
+  };
+
   const handleActualizarDispensador = async () => {
     if (!dispensadorSeleccionado) return;
 
@@ -104,10 +141,12 @@ const Home = () => {
           capacidad_maxima: parseInt(nuevoDispensador.capacidad_maxima, 10),
         }),
       });
+      showToast("success", "Dispensador actualizado con éxito");
       cargarDispensadoresConMangueras(sucursal.id);
       setOpenModal(false);
     } catch (error) {
       console.error("Error actualizando dispensador:", error);
+      showToast("error", "Dispensador actualizado sin éxito");
     }
   };
 
@@ -128,10 +167,12 @@ const Home = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaManguera),
       });
+      showToast("success", "Manguera creda con éxito");
       cargarDispensadoresConMangueras(sucursal.id);
       setOpenModalManguera(false);
     } catch (error) {
       console.error("Error creando manguera:", error);
+      showToast("error", "Manguera creada sin éxito");
     }
   };
 
@@ -144,41 +185,39 @@ const Home = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaManguera),
       });
+      showToast("success", "Manguera actualizada con éxito");
       cargarDispensadoresConMangueras(sucursal.id);
       setOpenModalManguera(false);
     } catch (error) {
       console.error("Error actualizando manguera:", error);
+      showToast("error", "Manguera actualizada sin éxito");
     }
   };
   const handleEliminarManguera = async (mangueraId) => {
-    if (confirm("¿Seguro que deseas eliminar esta manguera?")) {
-      try {
-        await fetch(`${API_URL}/mangueras/${mangueraId}`, {
-          method: "DELETE",
-        });
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar manguera?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
+
+    if (!result.isConfirmed) return;
+    try {
+      const res = await fetch(`${API_URL}/mangueras/${mangueraId}`, {
+        method: "DELETE",
+      });
+      if (res.status === 204) {
+        await mostrarExito("La manguera ha sido eliminada.");
         cargarDispensadoresConMangueras(sucursal.id);
-      } catch (error) {
-        console.error("Error eliminando manguera:", error);
+      } else {
+        const err = await res.json();
+        mostrarError(err.message);
       }
+    } catch (error) {
+      console.error("Error eliminando manguera:", error);
+      mostrarError("Error del servidor");
     }
   };
 
-  const handleCrearDispensador = async () => {
-    try {
-      await fetch(`${API_URL}/dispensadores`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...nuevoDispensador,
-          capacidad_maxima: parseInt(nuevoDispensador.capacidad_maxima, 10),
-          id_sucursal: sucursal.id,
-        }),
-      });
-      cargarDispensadoresConMangueras(sucursal.id);
-    } catch (error) {
-      console.error("Error creando dispensador:", error);
-    }
-  };
   const handleAbrirModalCrear = () => {
     setModoModal("crear");
     setNuevoDispensador({
@@ -340,6 +379,7 @@ const Home = () => {
         onCrear={handleCrearManguera}
         onActualizar={handleActualizarManguera}
       />
+      <ToastContainer/>
     </div>
   );
 };

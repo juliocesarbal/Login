@@ -115,7 +115,7 @@ export const deleteProducto = async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query(`DELETE FROM producto WHERE id = $1`, [id]);
-    res.json({ message: "Producto eliminado correctamente" });
+    res.status(204).json({ mensaje: "Producto eliminada con éxito" });
   } catch (err) {
     res.status(500).json({ error: "Error al eliminar producto" });
   }

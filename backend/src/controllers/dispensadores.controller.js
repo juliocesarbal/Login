@@ -72,8 +72,7 @@ export const deleteDispensadoresDeSucursal = async (req, res) => {
     if (rowCount === 0) {
       return res.status(404).json({ message: "Dispensador no encontrado" });
     }
-
-    res.json({ message: "Dispensador eliminado correctamente" });
+    res.status(204).send();
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error al eliminar dispensador" });

@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import "./ofertas.css";
 import API_URL from "../../config/config.js";
 import ModalOferta from "./ModalOfertas.jsx";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
+import {
+  mostrarConfirmacion,
+  mostrarExito,
+  mostrarError,
+} from "../../utils/alertUtils";
 
 const Ofertas = () => {
   const [ofertas, setOfertas] = useState([]);
@@ -18,11 +25,18 @@ const Ofertas = () => {
       setOfertas(data);
     } catch (error) {
       console.error("Error al cargar ofertas:", error);
+      showToast("error", "error al obtener descuentos");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar esta oferta?")) return;
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar descuento?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch(`${API_URL}/descuentos/${id}`, {
@@ -30,15 +44,59 @@ const Ofertas = () => {
       });
 
       if (res.status === 204) {
-        alert("Oferta eliminada exitosamente");
+        await mostrarExito("El descuento ha sido eliminado.");
         setOfertas((prev) => prev.filter((o) => o.id !== id));
       } else {
         const err = await res.json();
-        alert("Error: " + err.message);
+        console.error("Error al eliminar el descuento:", err);
+        mostrarError("Error al eliminar el descuento:");
       }
     } catch (err) {
-      console.error("Error al eliminar oferta:", err);
-      alert("Error del servidor");
+      console.error("Error al eliminar el descuento:", err);
+      mostrarError("Error del servidor");
+    }
+  };
+  const crearOferta = async (nuevaOferta) => {
+    try {
+      const res = await fetch(`${API_URL}/descuentos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevaOferta),
+      });
+
+      if (!res.ok) {
+        showToast("error", "Descuento creado sin éxito");
+      }
+
+      fetchOfertas();
+      showToast("success", "Descuento creado con éxito");
+    } catch (error) {
+      console.error("Error al crear oferta:", error);
+      showToast("error", "Descuento creado sin éxito");
+    }
+  };
+
+  const actualizarOferta = async (id, ofertaActualizada) => {
+    try {
+      const res = await fetch(`${API_URL}/descuentos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ofertaActualizada),
+      });
+
+      if (!res.ok) {
+        showToast("error", "Descuento actualizado sin éxito");
+      }
+
+      fetchOfertas();
+      showToast("success", "Descuento actualizado con éxito");
+    } catch (error) {
+      console.error("Error al actualizar oferta:", error);
+      showToast("error", "Descuento actualizado sin éxito");
     }
   };
 
@@ -95,8 +153,11 @@ const Ofertas = () => {
         <ModalOferta
           ofertaSeleccionada={ofertaEditando}
           onClose={handleCloseModal}
+          onCrear={crearOferta}
+          onActualizar={actualizarOferta}
         />
       )}
+      <ToastContainer />
     </div>
   );
 };

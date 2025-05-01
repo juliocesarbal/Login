@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import "./registroAsistencia.css";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
+
 
 const RegistroAsistencia = () => {
   const [asistencias, setAsistencias] = useState([]);
@@ -24,10 +27,10 @@ const RegistroAsistencia = () => {
       let asistencias = Array.isArray(data) ? data : [];
 
       const now = new Date();
-    now.setHours(now.getHours() - 4); // Ajustar a Bolivia (UTC-4)
-    const hoy = now.toISOString().split("T")[0]; // formato YYYY-MM-DD
+      now.setHours(now.getHours() - 4); // Ajustar a Bolivia (UTC-4)
+      const hoy = now.toISOString().split("T")[0]; // formato YYYY-MM-DD
 
-    const existeHoy = asistencias.some((a) => a.fecha.startsWith(hoy));
+      const existeHoy = asistencias.some((a) => a.fecha.startsWith(hoy));
 
       // Si no hay asistencia de hoy, agregamos una fila "vacía" para marcarla
       if (!existeHoy) {
@@ -50,6 +53,7 @@ const RegistroAsistencia = () => {
       setAsistencias(asistencias);
     } catch (err) {
       console.error("Error al obtener asistencias:", err);
+      showToast("warning","error al obtener las asistencias")
     }
   };
 
@@ -61,8 +65,10 @@ const RegistroAsistencia = () => {
         body: JSON.stringify({ id_usuario: usuarioId }),
       });
       obtenerAsistencias();
+      showToast("success", "Asistencia marcada con éxito");
     } catch (err) {
       console.error("Error al marcar entrada:", err);
+      showToast("error","error al marcar la entrada")
     }
   };
 
@@ -73,9 +79,11 @@ const RegistroAsistencia = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_usuario: usuarioId }),
       });
+      showToast("success", "Salida marcada con éxito");
       obtenerAsistencias();
     } catch (err) {
       console.error("Error al marcar salida:", err);
+      showToast("error","error al marcar la salida")
     }
   };
 
@@ -121,7 +129,7 @@ const RegistroAsistencia = () => {
   return (
     <div className="planilla-container">
       <h2 className="planilla-title">Planilla de Asistencia</h2>
-  
+
       {permisos.includes("gestionar_historial_asistencias") && (
         <div className="botones-historial">
           <button onClick={obtenerTodoElHistorial} className="btn-ver-todo">
@@ -132,7 +140,7 @@ const RegistroAsistencia = () => {
           </button>
         </div>
       )}
-  
+
       <div className="tabla-responsive">
         <table className="planilla-table">
           <thead>
@@ -173,10 +181,9 @@ const RegistroAsistencia = () => {
           </tbody>
         </table>
       </div>
+      <ToastContainer/>
     </div>
   );
-  
 };
 
 export default RegistroAsistencia;
-

@@ -3,6 +3,13 @@ import API_URL from "../../config/config";
 import "./inventario.css";
 import ModalProducto from "./ModalProducto.jsx";
 import ModalCategoria from "./ModalCategoria.jsx";
+import { ToastContainer } from "react-toastify";
+import { showToast } from "../../utils/toastUtils";
+import {
+  mostrarConfirmacion,
+  mostrarExito,
+  mostrarError,
+} from "../../utils/alertUtils";
 
 const Inventario = () => {
   const [categorias, setCategorias] = useState([]);
@@ -33,6 +40,7 @@ const Inventario = () => {
       setOfertas(data);
     } catch (err) {
       console.error("Error cargando ofertas", err);
+      showToast("warning", "error al obtener los descuentos");
     }
   };
 
@@ -49,6 +57,7 @@ const Inventario = () => {
       setProveedores(data);
     } catch (err) {
       console.error("Error cargando proveedores", err);
+      showToast("warning", "error al obtener lps proveedores");
     }
   };
 
@@ -75,6 +84,7 @@ const Inventario = () => {
       setProductosPorCategoria(productosMap);
     } catch (err) {
       console.error("Error cargando categorías o productos", err);
+      showToast("warning", "error al obtener las categorias y productos");
     }
   };
 
@@ -92,12 +102,14 @@ const Inventario = () => {
       });
 
       if (res.ok) {
+        showToast("success", "Categoria crada con éxito");
         setNuevaCategoria({ nombre: "", descripcion: "" });
         fetchCategoriasYProductos();
       } else {
-        alert("No se pudo crear la categoría");
+        showToast("error", "Categoria crada sin éxito");
       }
     } catch (err) {
+      showToast("error", "Categoria crada sin éxito");
       console.error("Error al crear categoría", err);
     }
   };
@@ -105,11 +117,13 @@ const Inventario = () => {
   const handleEliminarCategoria = async () => {
     if (!categoriaSeleccionada) return;
 
-    const confirmacion = confirm(
-      "¿Estás seguro que deseas eliminar esta categoría?"
-    );
-    if (!confirmacion) return;
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar categoria?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
 
+    if (!result.isConfirmed) return;
     try {
       const res = await fetch(
         `${API_URL}/categorias/${categoriaSeleccionada}`,
@@ -118,15 +132,17 @@ const Inventario = () => {
         }
       );
 
-      if (res.ok) {
-        alert("Categoría eliminada con éxito");
+      if (res.status === 204) {
+        await mostrarExito("La categoria ha sido eliminada.");
         setCategoriaSeleccionada("");
         fetchCategoriasYProductos();
       } else {
-        alert("Error al eliminar categoría");
+        const err = await res.json();
+        mostrarError(err.message);
       }
     } catch (err) {
-      console.error("Error eliminando categoría", err);
+      console.error("Error eliminando categoria:", err);
+      mostrarError("Error del servidor");
     }
   };
   const abrirModalNuevoProducto = (categoriaId) => {
@@ -156,39 +172,55 @@ const Inventario = () => {
       });
 
       if (res.ok) {
+        metodo === "crear"
+          ? showToast("success", "Producto crado con éxito")
+          : showToast("success", "Producto actualizado con éxito");
+        showToast("success", "Categoria crada con éxito");
         fetchCategoriasYProductos();
         setModalAbierto(false);
       } else {
         alert("Error al guardar producto");
+        metodo === "crear"
+          ? showToast("error", "Producto crado sin éxito")
+          : showToast("error", "Producto actualizado sin éxito");
       }
     } catch (err) {
       console.error("Error al guardar producto", err);
+      showToast("error", "Error al guardar producto");
     }
   };
 
   const handleEliminarProducto = async (productoId) => {
-    const confirmar = confirm("¿Estás seguro de eliminar este producto?");
-    if (!confirmar) return;
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar producto?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch(`${API_URL}/productos/${productoId}`, {
         method: "DELETE",
       });
 
-      if (res.ok) {
+      if (res.status === 204) {
+        await mostrarExito("El producto ha sido eliminado.");
         fetchCategoriasYProductos();
       } else {
-        alert("Error al eliminar producto");
+        const err = await res.json();
+        mostrarError(err.message);
       }
     } catch (err) {
-      console.error("Error eliminando producto", err);
+      console.error("Error eliminando producto:", err);
+      mostrarError("Error del servidor");
     }
   };
 
   return (
     <div className="inventario-container">
       <h2>Inventario por Categoría</h2>
-  
+
       <div className="acciones-inventario">
         <button
           onClick={() => {
@@ -209,7 +241,7 @@ const Inventario = () => {
           Eliminar Categoría
         </button>
       </div>
-  
+
       {categorias.map((cat) => (
         <div key={cat.id} className="categoria-bloque">
           <div className="categoria-header">
@@ -222,7 +254,7 @@ const Inventario = () => {
             </button>
           </div>
           <p>{cat.descripcion}</p>
-  
+
           <div className="productos-grid">
             {productosPorCategoria[cat.id]?.map((prod) => (
               <div key={prod.id} className="producto-card">
@@ -257,7 +289,7 @@ const Inventario = () => {
           </div>
         </div>
       ))}
-  
+
       {/* Modal para crear o editar productos */}
       <ModalProducto
         open={modalAbierto}
@@ -270,7 +302,7 @@ const Inventario = () => {
         sucursalId={sucursalId}
         modo={modoProducto}
       />
-  
+
       {/* Modal para crear o eliminar categorías */}
       <ModalCategoria
         open={modalCategoriaAbierto}
@@ -280,13 +312,13 @@ const Inventario = () => {
         setNuevaCategoria={setNuevaCategoria}
         categorias={categorias}
         categoriaSeleccionada={categoriaSeleccionada}
-        setCategoriaSeleccionada={setCategoriaSeleccionada} 
+        setCategoriaSeleccionada={setCategoriaSeleccionada}
         onCrear={handleCrearCategoria}
-        onEliminar={handleEliminarCategoria}        
+        onEliminar={handleEliminarCategoria}
       />
+      <ToastContainer />
     </div>
   );
-  
 };
 
 export default Inventario;

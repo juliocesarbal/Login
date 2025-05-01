@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // <-- importar Link
 import "./usuarios.css";
 import API_URL from "../../config/config";
 import ModalPermisos from "./ModalPermisos";
 import ModalCreateUser from "./ModalCreateUser";
+import {
+  mostrarConfirmacion,
+  mostrarExito,
+  mostrarError,
+} from "../../utils/alertUtils";
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [usuarioEditando, setUsuarioEditando] = useState(null);
   const [modalCrearAbierto, setModalCrearAbierto] = useState(false);
-
 
   useEffect(() => {
     fetchUsuarios();
@@ -26,23 +29,29 @@ const Usuarios = () => {
   };
 
   const handleDelete = async (ci) => {
-    if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
+    const result = await mostrarConfirmacion({
+      titulo: "¿Eliminar usuario?",
+      texto: "Esta acción no se puede deshacer.",
+      confirmText: "Sí, eliminar",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
-      const response = await fetch(`${API_URL}/users/ci/${ci}`, {
+      const res = await fetch(`${API_URL}/users/ci/${ci}`, {
         method: "DELETE",
       });
 
-      if (response.status === 204) {
-        alert("Usuario eliminado exitosamente");
+      if (res.status === 204) {
+        await mostrarExito("El usuario ha sido eliminado.");
         setUsuarios((prev) => prev.filter((u) => u.ci !== ci));
       } else {
-        const errorData = await response.json();
-        alert("Error: " + errorData.message);
+        const err = await res.json();
+        mostrarError(err.message);
       }
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
-      alert("Error del servidor");
+      mostrarError('Error del servidor');
     }
   };
 
@@ -116,9 +125,9 @@ const Usuarios = () => {
       )}
       {modalCrearAbierto && (
         <ModalCreateUser
-        onClose={() => setModalCrearAbierto(false)}
-        onUserCreated={() => fetchUsuarios()}
-      />      
+          onClose={() => setModalCrearAbierto(false)}
+          onUserCreated={() => fetchUsuarios()}
+        />
       )}
     </div>
   );

@@ -58,10 +58,14 @@ export const updateDispensadoresDeSucursal = async (req, res) => {
 export const deletemangueraDeSucursal = async (req, res) => {
   const { mangueraId } = req.params;
   try {
-    const { rows } = await pool.query("DELETE FROM manguera WHERE id = $1", [
-      mangueraId,
-    ]);
-    res.json(rows);
+    const { rowCount } = await pool.query(
+      "DELETE FROM manguera WHERE id = $1",
+      [mangueraId]
+    );
+    if (rowCount === 0) {
+      return res.status(404).json({ message: "Dispensador no encontrado" });
+    }
+    res.status(204).send();
   } catch (err) {
     res.status(500).json({ message: "Error al obtener dispensadores" });
   }

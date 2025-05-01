@@ -22,7 +22,6 @@
   min-width: 800px;
 }
 
-
 .tabla-proveedores thead {
   background-color: #1c1c1c;
 }
@@ -120,10 +119,46 @@
   border-radius: 8px;
   resize: none;
 }
+.swal-dark-popup {
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.1);
+  font-family: inherit;
+}
 
-.modal-buttons {
+.swal-title {
+  color: #00d1b2 !important;
+}
+
+.swal-confirm-btn {
+  background-color: #ff5c5c !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  transition: background-color 0.3s ease;
+}
+
+.swal-confirm-btn:hover {
+  background-color: #e04848 !important;
+}
+
+.swal-cancel-btn {
+  background-color: #555 !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  transition: background-color 0.3s ease;
+}
+
+.swal-cancel-btn:hover {
+  background-color: #444 !important;
+}
+
+.modal-prv-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
   margin-top: 1.5rem;
 }
 
@@ -139,7 +174,7 @@
   transition: background-color 0.3s ease;
 }
 
-.save-btn-pv{
+.save-btn-pv {
   background-color: #00d1b2;
   color: #000;
 }
