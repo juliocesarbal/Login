@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
-import { Pencil, Save, X } from "lucide-react"; // íconos
+import { Pencil, Save, X } from "lucide-react"; 
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
 import "./perfil.css";
 
 const Perfil = () => {
   const [usuario, setUsuario] = useState(null);
   const [editando, setEditando] = useState(false);
-  const [mensaje, setMensaje] = useState("");
   const [errors, setErrors] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
 
@@ -71,21 +72,21 @@ const Perfil = () => {
       const data = await res.json();
       if (res.ok) {
         setUsuario(data);
-        setMensaje("Perfil actualizado con éxito");
+        showToast("success", "Perfil actualizado con éxito");
         setEditando(false);
       } else {
-        setMensaje("Error al actualizar perfil");
+        showToast("error", "Error al actualizar perfil");
       }
     } catch (error) {
       console.error(error);
-      setMensaje("Error al conectarse con el servidor");
+      showToast("error", "Error del servidor");
+      
     }
   };
 
   const handleCancelar = () => {
     cargarPerfil(); // vuelve a traer los datos de la base
     setEditando(false);
-    setMensaje("");
     setErrors({});
   };
 
@@ -182,8 +183,7 @@ const Perfil = () => {
           </button>
         )}
       </div>
-
-      {mensaje && <p className="mensaje">{mensaje}</p>}
+        <ToastContainer/>
     </div>
   );
 };

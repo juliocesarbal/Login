@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import "./modalPermisos.css";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
 
 const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
   const [roles, setRoles] = useState([]);
@@ -38,13 +40,11 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
           const rolActual = rolesData.find(
             (r) => r.nombre === usuarioPermisosData.rol
           );
-
           setRolSeleccionado(rolActual?.id || "");
-          if (rolActual?.nombre.toLowerCase() === "administrador") {
-            setPermisosUsuario(new Set(permisosData.map((p) => p.id)));
-          }
+          
         } catch (error) {
           console.error("Error al cargar datos del modal:", error);
+          showToast("warning","error al obtener los datos")
         }
       };
 
@@ -79,28 +79,31 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
           }),
         }
       );
-
+  
       if (response.ok) {
-        alert("Permisos actualizados correctamente");
-
-        // Actualizar rol mostrado en la tabla
-        const rolNombre =
-          roles.find((r) => r.id === rolSeleccionado)?.nombre ||
-          "Rol desconocido";
+        showToast("success", "Permisos actualizados correctamente");
+        // Recargar los permisos desde backend
+        const usuarioPermisosRes = await fetch(`${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`);
+        const usuarioPermisosData = await usuarioPermisosRes.json();
+  
+        const permisosActualizados = new Set(usuarioPermisosData.permisos.map(p => p.id));
+        setPermisosUsuario(permisosActualizados);
+  
+        const rolNombre = roles.find((r) => r.id === rolSeleccionado)?.nombre || "Rol desconocido";
         if (onRolActualizado) {
           onRolActualizado(usuarioSeleccionado.id, rolNombre);
         }
-
-        onClose();
+  
       } else {
         const error = await response.json();
-        alert("Error al guardar: " + error.message);
+        showToast("error", "Error al actualizar los Permisos");
       }
     } catch (error) {
       console.error("Error al guardar permisos:", error);
-      alert("Error del servidor");
+      showToast("error", "Error del servidor");
     }
   };
+  
 
   return (
     <div className="modal-permiso-overlay">
@@ -140,10 +143,11 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
             Guardar
           </button>
           <button className="cerrar-btn" onClick={onClose}>
-            Cancelar
+            Cerrar
           </button>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

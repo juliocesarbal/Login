@@ -3,6 +3,8 @@ import "./usuarios.css";
 import API_URL from "../../config/config";
 import ModalPermisos from "./ModalPermisos";
 import ModalCreateUser from "./ModalCreateUser";
+import { showToast } from "../../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
 import {
   mostrarConfirmacion,
   mostrarExito,
@@ -25,6 +27,7 @@ const Usuarios = () => {
       setUsuarios(data);
     } catch (error) {
       console.error("Error al cargar usuarios:", error);
+      showToast("warning","error al obtener usuarios");
     }
   };
 
@@ -129,6 +132,7 @@ const Usuarios = () => {
           onUserCreated={() => fetchUsuarios()}
         />
       )}
+      <ToastContainer/>
     </div>
   );
 };
