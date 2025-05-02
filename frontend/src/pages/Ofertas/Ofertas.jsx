@@ -70,7 +70,7 @@ const Ofertas = () => {
         return;
       }
       showToast("success", "Descuento creado con éxito");
-      fetchOfertas();
+      handleCloseModal();
     } catch (error) {
       console.error("Error al crear oferta:", error);
       showToast("error", "Descuento creado sin éxito");

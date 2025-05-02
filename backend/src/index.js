@@ -14,7 +14,8 @@ import proveedoresRoutes from "./routes/proveedores.routes.js";
 import productosRoutes from "./routes/productos.routes.js";
 import descuentosRoutes from "./routes/descuentos.routes.js";
 import dispensadoresRoutes from "./routes/dispensadores.routes.js";
-import mangueraRoutes from "./routes/mangueras.routes.js"
+import mangueraRoutes from "./routes/mangueras.routes.js";
+import authRoutes from './routes/auth.routes.js';
 
 const corsOptions = {
   origin: "http://localhost:5173",
@@ -43,7 +44,8 @@ app.use("/api/combustibles", combustibleRoutes);
 app.use("/api/proveedores", proveedoresRoutes);
 app.use("/api/productos", productosRoutes);
 app.use("/api/descuentos",descuentosRoutes);
-app.use("/api/dispensadores",dispensadoresRoutes)
-app.use("/api/mangueras",mangueraRoutes)
+app.use("/api/dispensadores",dispensadoresRoutes);
+app.use("/api/mangueras",mangueraRoutes);
+app.use("/api",authRoutes);
 app.listen(PORT);
 console.log("server on port ", PORT);

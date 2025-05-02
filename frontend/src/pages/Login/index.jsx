@@ -3,7 +3,7 @@ import { faUser, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import "./login.css";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import API_URL from "../../config/config";
 
 const Login = () => {
@@ -12,6 +12,8 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isDisabled, setIsDisabled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [resetUser, setResetUser] = useState("");
 
   useEffect(() => {
     const isValid = Object.values(errors).every((error) => !error);
@@ -101,6 +103,24 @@ const Login = () => {
       console.error("Error al enviar los datos del front:", error);
     }
   };
+  const handleSendReset = async () => {
+    try {
+      const res = await fetch(`${API_URL}/auth/enviar-reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: resetUser }),
+      });
+
+      if (res.ok) {
+        alert("Correo enviado si el usuario existe");
+        setShowModal(false);
+      } else {
+        alert("Error al enviar");
+      }
+    } catch (err) {
+      console.error("Error al enviar correo", err);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -152,7 +172,25 @@ const Login = () => {
         <button disabled={isDisabled} className="login-button">
           Iniciar sesión
         </button>
+        <p className="forgot-password" onClick={() => setShowModal(true)}>
+          ¿Olvidaste tu contraseña?
+        </p>
       </form>
+      {showModal && (
+        <div className="modal-login-overlay">
+          <div className="modal-login">
+            <h3>Restablecer contraseña</h3>
+            <input
+              type="text"
+              placeholder="Ingresa tu usuario"
+              value={resetUser}
+              onChange={(e) => setResetUser(e.target.value)}
+            />
+            <button onClick={handleSendReset}>Enviar correo</button>
+            <button onClick={() => setShowModal(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
