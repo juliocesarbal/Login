@@ -1,10 +1,8 @@
 import { pool } from "../db.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer";
 
-// Configura tu clave API de SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const enviarReset = async (req, res) => {
   const { name } = req.body;
@@ -21,14 +19,20 @@ export const enviarReset = async (req, res) => {
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
     expiresIn: "15m",
   });
+  
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+  
   const resetLink = `${process.env.FRONTEND_URL}/change-password/${token}`;
 
-  const msg = {
+  await transporter.sendMail({
+    from: '"Octano" <noreply@octano.com>',
     to: user.correo,
-    from: {
-      email: process.env.EMAIL_USER, // Debe estar verificado en SendGrid
-      name: "Octano",
-    },
     subject: "🔐 Restablece tu contraseña - Octano",
     text: `
 Hola ${user.nombre},
@@ -68,15 +72,8 @@ Equipo Octano
       </p>
     </div>
   `,
-  };
-
-  try {
-    await sgMail.send(msg);
-    res.status(200).json({ msg: "Correo enviado si el usuario existe" });
-  } catch (error) {
-    console.error("Error al enviar correo:", error.response?.body || error);
-    res.status(500).json({ msg: "Error al enviar el correo" });
-  }
+  });
+  res.json({ msg: "Correo enviado si el usuario existe" });
 };
 
 // ✅ Cambiar contraseña con token
@@ -103,6 +100,7 @@ export const cambiarContra = async (req, res) => {
     return res.status(400).json({ message: "Token inválido o expirado" });
   }
 };
+
 export const verificarToken = (req, res) => {
   const { token } = req.params;
 
