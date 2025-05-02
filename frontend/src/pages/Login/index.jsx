@@ -201,7 +201,7 @@ const Login = () => {
         <div className="modal-login-overlay">
           <div className="modal-login">
             <h3>Restablecer contraseña</h3>
-            <h4>revisar el correo en spam</h4>
+            <h4>revisar el correo enviado en spam</h4>
             <input
               type="text"
               placeholder="Ingresa tu usuario"
