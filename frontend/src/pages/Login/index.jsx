@@ -3,7 +3,7 @@ import { faUser, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import "./login.css";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API_URL from "../../config/config";
 
 const Login = () => {
@@ -14,6 +14,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [resetUser, setResetUser] = useState("");
+  const [resetError, setResetError] = useState("");
 
   useEffect(() => {
     const isValid = Object.values(errors).every((error) => !error);
@@ -105,20 +106,25 @@ const Login = () => {
   };
   const handleSendReset = async () => {
     try {
+      if (!resetUser.trim()) {
+        setResetError("El usuario es requerido");
+        return;
+      }
       const res = await fetch(`${API_URL}/auth/enviar-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: resetUser }),
       });
-
-      if (res.ok) {
-        alert("Correo enviado si el usuario existe");
-        setShowModal(false);
-      } else {
-        alert("Error al enviar");
+      const data = await res.json();
+      if (res.status === 400) {
+        setResetError(data.msg || "usuario no encontrado");
+        return;
       }
+      alert("Correo enviado exitosamente");
+      setShowModal(false);
     } catch (err) {
       console.error("Error al enviar correo", err);
+      setResetError("Error al conectar con el servidor");
     }
   };
 
@@ -184,8 +190,13 @@ const Login = () => {
               type="text"
               placeholder="Ingresa tu usuario"
               value={resetUser}
-              onChange={(e) => setResetUser(e.target.value)}
+              autoComplete="off"
+              onChange={(e) => {
+                setResetUser(e.target.value);
+                setResetError(""); // limpiar error al escribir
+              }}
             />
+            {resetError && <span className="error">{resetError}</span>}
             <button onClick={handleSendReset}>Enviar correo</button>
             <button onClick={() => setShowModal(false)}>Cancelar</button>
           </div>

@@ -7,11 +7,12 @@ import nodemailer from "nodemailer";
 export const enviarReset = async (req, res) => {
     const { name } = req.body;
     const { rows } = await pool.query("SELECT * FROM usuario WHERE nombre = $1", [name]);
-  
+    console.log(rows)
     if (rows.length === 0) {
-      return res.status(200).json({ msg: "Correo enviado si el usuario existe" }); // No reveles existencia
+      return res.status(400).json({
+            msg: "usuario no registrado",
+      }); 
     }
-  
     const user = rows[0];
   
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
@@ -38,7 +39,7 @@ export const enviarReset = async (req, res) => {
       `,
     });
   
-    res.json({ msg: "Correo enviado si el usuario existe" });
+    res.status(200).json({ msg: "Correo enviado si el usuario existe" });
   };
   
   // ✅ Cambiar contraseña con token
