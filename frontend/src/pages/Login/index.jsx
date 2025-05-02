@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config/config";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -110,23 +111,37 @@ const Login = () => {
         setResetError("El usuario es requerido");
         return;
       }
+  
+      const loadingToast = toast.loading("Enviando correo...");
       const res = await fetch(`${API_URL}/auth/enviar-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: resetUser }),
       });
       const data = await res.json();
+      toast.dismiss(loadingToast);
+  
       if (res.status === 400) {
         setResetError(data.msg || "usuario no encontrado");
+        toast.error(data.msg || "Usuario no encontrado");
         return;
       }
-      alert("Correo enviado exitosamente");
-      setShowModal(false);
+      if (res.status === 500) {
+        setResetError(data.msg || "error al enviar el correo");
+        toast.error("Ocurrió un error al enviar el correo");
+        return;
+      }
+  
+      toast.success("Correo enviado 📬. Revisá tu bandeja o spam");
+      //setShowModal(false);
     } catch (err) {
       console.error("Error al enviar correo", err);
+      toast.dismiss();
+      toast.error("Error al conectar con el servidor");
       setResetError("Error al conectar con el servidor");
     }
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -186,6 +201,7 @@ const Login = () => {
         <div className="modal-login-overlay">
           <div className="modal-login">
             <h3>Restablecer contraseña</h3>
+            <h4>revisar el correo en spam</h4>
             <input
               type="text"
               placeholder="Ingresa tu usuario"
