@@ -35,11 +35,6 @@ const ModalCreateUser = ({ onClose, onUserCreated }) => {
   const [sucursales, setSucursales] = useState([]);
   const [roles, setRoles] = useState([]);
 
-  const preventInvalidNumberInput = (e) => {
-    if (["e", "E", "+", "-"].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   useEffect(() => {
     fetch(`${API_URL}/sucursales`)
@@ -139,7 +134,7 @@ const ModalCreateUser = ({ onClose, onUserCreated }) => {
             type: "email",
           },
           { icon: faHouse, name: "domicilio", placeholder: "Domicilio" },
-        ].map(({ icon, name, placeholder, type = "text" }) => (
+        ].map(({ icon, name, placeholder, type}) => (
           <div key={name} className="modal-Inputclass">
             <FontAwesomeIcon icon={icon} className="icon" />
             <input

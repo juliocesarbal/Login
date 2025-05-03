@@ -12,7 +12,6 @@ import {
 import { showToast } from "../../utils/toastUtils";
 
 const Home = () => {
-  const navigate = useNavigate();
   const [sucursal, setSucursal] = useState(null);
   const [dispensadores, setDispensadores] = useState([]);
   const [permisos, setPermisos] = useState([]);
@@ -36,7 +35,6 @@ const Home = () => {
 
   useEffect(() => {
     const usuarioId = sessionStorage.getItem("usuarioId");
-
     if (usuarioId) {
       fetch(`${API_URL}/usuarios/permisos/${usuarioId}`)
         .then((res) => res.json())

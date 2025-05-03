@@ -18,7 +18,6 @@ const Router = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/change-password/:token" element={<ChangePassword />} />
-
       {/* Rutas protegidas */}
       <Route element={<PrivateRoutes />}>
         <Route element={<Layout />}>

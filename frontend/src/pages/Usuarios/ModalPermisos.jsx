@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import API_URL from "../../config/config";
 import "./modalPermisos.css";
 import { showToast } from "../../utils/toastUtils";
+import toast from "react-hot-toast";
 
 const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
   const [roles, setRoles] = useState([]);
   const [permisos, setPermisos] = useState([]);
   const [permisosUsuario, setPermisosUsuario] = useState(new Set());
   const [rolSeleccionado, setRolSeleccionado] = useState("");
+
 
   useEffect(() => {
     if (usuarioSeleccionado) {
@@ -67,6 +69,7 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
         alert("Debe seleccionar un rol antes de guardar.");
         return;
       }
+      const loadingToast = toast.loading("Guardando Permisos...");
       const response = await fetch(
         `${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`,
         {
@@ -78,9 +81,10 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
           }),
         }
       );
+      toast.dismiss(loadingToast);
   
       if (response.ok) {
-        showToast("success", "Permisos actualizados correctamente");
+        toast.success("Permisos actualizados correctamente");
         // Recargar los permisos desde backend
         const usuarioPermisosRes = await fetch(`${API_URL}/usuarios/permisos/${usuarioSeleccionado.id}`);
         const usuarioPermisosData = await usuarioPermisosRes.json();
@@ -92,6 +96,7 @@ const ModalPermisos = ({ usuarioSeleccionado, onClose, onRolActualizado }) => {
         if (onRolActualizado) {
           onRolActualizado(usuarioSeleccionado.id, rolNombre);
         }
+        onClose();
   
       } else {
         const error = await response.json();

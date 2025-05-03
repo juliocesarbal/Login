@@ -5,9 +5,9 @@ import nodemailer from "nodemailer";
 
 
 export const enviarReset = async (req, res) => {
-  const { name } = req.body;
-  const { rows } = await pool.query("SELECT * FROM usuario WHERE nombre = $1", [
-    name,
+  const { data } = req.body;
+  const { rows } = await pool.query("SELECT * FROM usuario WHERE nombre = $1" , [
+    data.name,
   ]);
 
   if (rows.length === 0) {
@@ -15,6 +15,10 @@ export const enviarReset = async (req, res) => {
   }
 
   const user = rows[0];
+
+  if(user.correo !== data.email){
+    return res.status(401).json({ msg: "el correo no coincide con el del usuario" });
+  }
 
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
     expiresIn: "15m",

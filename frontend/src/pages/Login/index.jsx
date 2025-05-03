@@ -14,8 +14,13 @@ const Login = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [resetUser, setResetUser] = useState("");
+  //const [resetUser, setResetUser] = useState("");
   const [resetError, setResetError] = useState("");
+
+  const [resetUser, setResetUser] = useState({
+    name: "",
+    email: "",
+  });
 
   useEffect(() => {
     const isValid = Object.values(errors).every((error) => !error);
@@ -107,23 +112,36 @@ const Login = () => {
   };
   const handleSendReset = async () => {
     try {
-      if (!resetUser.trim()) {
+      if (!resetUser.name.trim()) {
         setResetError("El usuario es requerido");
         return;
       }
-  
+      if (!resetUser.email.trim()) {
+        setResetError("El correo es requerido");
+        return;
+      }
+      if (!/\S+@\S+\.\S+/.test(resetUser.email)) {
+        setResetError("El correo no es válido");
+        return;
+      }
+
       const loadingToast = toast.loading("Enviando correo...");
       const res = await fetch(`${API_URL}/auth/enviar-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: resetUser }),
+        body: JSON.stringify({ data: resetUser }),
       });
       const data = await res.json();
       toast.dismiss(loadingToast);
-  
+
       if (res.status === 400) {
         setResetError(data.msg || "usuario no encontrado");
         toast.error(data.msg || "Usuario no encontrado");
+        return;
+      }
+      if (res.status === 401) {
+        setResetError(data.msg || "Correo no coincide con el del usuario");
+        toast.error(data.msg || "Correo no coincide con el del usuario");
         return;
       }
       if (res.status === 500) {
@@ -131,7 +149,7 @@ const Login = () => {
         toast.error("Ocurrió un error al enviar el correo");
         return;
       }
-  
+
       toast.success("Correo enviado 📬. Revisá tu bandeja o spam");
       //setShowModal(false);
     } catch (err) {
@@ -141,7 +159,6 @@ const Login = () => {
       setResetError("Error al conectar con el servidor");
     }
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -205,11 +222,21 @@ const Login = () => {
             <input
               type="text"
               placeholder="Ingresa tu usuario"
-              value={resetUser}
+              value={resetUser.name}
               autoComplete="off"
               onChange={(e) => {
-                setResetUser(e.target.value);
-                setResetError(""); // limpiar error al escribir
+                setResetUser((prev) => ({ ...prev, name: e.target.value }));
+                setResetError(""); // Limpiar error al escribir
+              }}
+            />
+            <input
+              type="email"
+              placeholder="Ingresa el correo del usuario"
+              value={resetUser.email}
+              autoComplete="off"
+              onChange={(e) => {
+                setResetUser((prev) => ({ ...prev, email: e.target.value }));
+                setResetError(""); // Limpiar error al escribir
               }}
             />
             {resetError && <span className="error">{resetError}</span>}
