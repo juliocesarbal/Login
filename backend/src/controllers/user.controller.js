@@ -37,9 +37,9 @@ export const loginProcess = async (req, res) => {
     if (!resultValidation.isEmpty()) {
       return res.status(400).json({ errors: resultValidation.array() });
     }
-    const { name, password } = req.body;
+    const { ci, password } = req.body;
 
-    if (name == "superUsuario" && password == "S12345") {
+    if (ci === "superUsuario" && password === "S12345") {
       const { rows } = await pool.query(
         `
         SELECT u.*, 
@@ -53,7 +53,7 @@ export const loginProcess = async (req, res) => {
         LEFT JOIN sucursal s ON u.id_sucursal = s.id
         WHERE u.nombre = $1
       `,
-        [name]
+        [ci]
       );
       const userToLogin = rows[0];
       delete userToLogin.contraseña;
@@ -91,17 +91,17 @@ export const loginProcess = async (req, res) => {
              s.esta_suspendido AS sucursal_suspendido
       FROM usuario u
       LEFT JOIN sucursal s ON u.id_sucursal = s.id
-      WHERE u.nombre = $1
+      WHERE u.ci = $1
     `,
-      [name]
+      [ci]
     );
 
     if (rows.length === 0) {
       return res.status(400).json({
         errors: [
           {
-            path: "name",
-            msg: "usuario no registrado",
+            path: "ci",
+            msg: "CI no registrado",
           },
         ],
       });

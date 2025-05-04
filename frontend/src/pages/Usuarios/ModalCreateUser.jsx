@@ -120,7 +120,7 @@ const ModalCreateUser = ({ onClose, onUserCreated }) => {
             placeholder: "Cédula de Identidad",
             type: "number",
           },
-          { icon: faUser, name: "name", placeholder: "Nombre de usuario" },
+          { icon: faUser, name: "name", placeholder: "Nombre" },
           {
             icon: faPhone,
             name: "telefono",

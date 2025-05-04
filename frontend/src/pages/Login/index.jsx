@@ -9,16 +9,15 @@ import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [objData, setObjData] = useState({ name: "", password: "" });
+  const [objData, setObjData] = useState({ ci: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isDisabled, setIsDisabled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  //const [resetUser, setResetUser] = useState("");
   const [resetError, setResetError] = useState("");
 
   const [resetUser, setResetUser] = useState({
-    name: "",
+    ci: "",
     email: "",
   });
 
@@ -36,7 +35,7 @@ const Login = () => {
 
   const validations = (name, value) => {
     const errorMessages = {
-      name: "El usuario es requerido",
+      ci: "El ci es requerido",
       password: "Debe tener 6 caracteres y una mayuscula",
     };
     let errorMessage = null;
@@ -112,7 +111,7 @@ const Login = () => {
   };
   const handleSendReset = async () => {
     try {
-      if (!resetUser.name.trim()) {
+      if (!resetUser.ci.trim()) {
         setResetError("El usuario es requerido");
         return;
       }
@@ -135,13 +134,13 @@ const Login = () => {
       toast.dismiss(loadingToast);
 
       if (res.status === 400) {
-        setResetError(data.msg || "usuario no encontrado");
-        toast.error(data.msg || "Usuario no encontrado");
+        setResetError(data.msg || "CI no encontrado");
+        toast.error(data.msg || "CI no encontrado");
         return;
       }
       if (res.status === 401) {
-        setResetError(data.msg || "Correo no coincide con el del usuario");
-        toast.error(data.msg || "Correo no coincide con el del usuario");
+        setResetError(data.msg || "Correo no coincide con el del CI");
+        toast.error(data.msg || "Correo no coincide con el del CI");
         return;
       }
       if (res.status === 500) {
@@ -176,14 +175,14 @@ const Login = () => {
             <FontAwesomeIcon icon={faUser} className="icon" />
             <input
               type="text"
-              name="name"
-              placeholder="usuario"
+              name="ci"
+              placeholder="CI"
               autoComplete="off"
               onChange={handleChange}
-              value={objData.name}
+              value={objData.ci}
             />
           </div>
-          {errors && <span className="error">{errors.name}</span>}
+          {errors && <span className="error">{errors.ci}</span>}
         </div>
 
         <div className="input-group">
@@ -221,17 +220,17 @@ const Login = () => {
             <h4>revisar el correo enviado en spam</h4>
             <input
               type="text"
-              placeholder="Ingresa tu usuario"
-              value={resetUser.name}
+              placeholder="Ingresa tu CI"
+              value={resetUser.ci}
               autoComplete="off"
               onChange={(e) => {
-                setResetUser((prev) => ({ ...prev, name: e.target.value }));
+                setResetUser((prev) => ({ ...prev, ci: e.target.value }));
                 setResetError(""); // Limpiar error al escribir
               }}
             />
             <input
               type="email"
-              placeholder="Ingresa el correo del usuario"
+              placeholder="Ingresa el correo del CI"
               value={resetUser.email}
               autoComplete="off"
               onChange={(e) => {

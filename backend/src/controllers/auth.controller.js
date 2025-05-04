@@ -6,18 +6,18 @@ import nodemailer from "nodemailer";
 
 export const enviarReset = async (req, res) => {
   const { data } = req.body;
-  const { rows } = await pool.query("SELECT * FROM usuario WHERE nombre = $1" , [
-    data.name,
+  const { rows } = await pool.query("SELECT * FROM usuario WHERE ci = $1" , [
+    data.ci,
   ]);
 
   if (rows.length === 0) {
-    return res.status(400).json({ msg: "Usuario no registrado" });
+    return res.status(400).json({ msg: "CI no registrado" });
   }
 
   const user = rows[0];
 
   if(user.correo !== data.email){
-    return res.status(401).json({ msg: "el correo no coincide con el del usuario" });
+    return res.status(401).json({ msg: "el correo no coincide con el del CI" });
   }
 
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
@@ -77,7 +77,7 @@ Equipo Octano
     </div>
   `,
   });
-  res.json({ msg: "Correo enviado si el usuario existe" });
+  res.json({ msg: "Correo enviado exitosamente" });
 };
 
 // ✅ Cambiar contraseña con token
