@@ -80,6 +80,7 @@ const ModalCreateUser = ({ onClose, onUserCreated }) => {
   const handleChange = ({ target: { value, name } }) => {
     setObjData({ ...objData, [name]: value });
     validations(name, value);
+    setErrors((prev) => ({ ...prev, [name]: null }));
   };
 
   const sendData = async () => {

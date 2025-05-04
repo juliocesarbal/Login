@@ -228,14 +228,25 @@ export const createUser = async (req, res) => {
     });
   } catch (error) {
     if (error?.code === "23505") {
-      return res.status(400).json({
-        errors: [
-          {
-            path: "ci/correo",
-            msg: "CI o Email ya existente",
-          },
-        ],
-      });
+      const detail = error.detail || "";
+
+      const errors = [];
+
+      if (detail.includes("(ci)")) {
+        errors.push({
+          path: "ci",
+          msg: "CI ya registrado",
+        });
+      }
+
+      if (detail.includes("(correo)") || detail.includes("(email)")) {
+        errors.push({
+          path: "email",
+          msg: "Correo ya registrado",
+        });
+      }
+
+      return res.status(400).json({ errors });
     }
 
     console.error("Error en createUser:", error);
