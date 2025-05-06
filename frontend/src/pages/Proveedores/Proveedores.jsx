@@ -92,6 +92,8 @@ const Proveedores = () => {
   return (
     <div className="proveedores-container">
       <h2 className="proveedores-title">Gestión de Proveedores</h2>
+      <h3 className="proveedores-title">Hola Julio</h3>
+      <h1 className="proveedores-title">Torrez</h1>
       <button className="crear-btn" onClick={() => setProveedorEditando({})}>
         Crear Nuevo Proveedor
       </button>
